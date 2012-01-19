@@ -12,6 +12,13 @@ def test_make_project(juggler):
     juggler.shedule_jobs(build)
     jobs = juggler.db.view('jobs/all', schema=model.Job)
     job, = jobs
+
+
+    #XXX: hack
+    job.status = 'completed'
+    job.result = 'passed'
+    juggler.store(job)
+
     print job
     assert 0
 

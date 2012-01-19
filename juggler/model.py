@@ -10,7 +10,7 @@ def setup_design(db):
     from couchdbkit.designer import push
     from os.path import dirname
     push(dirname(__file__) + '/_design/jobs', db)
-    push(dirname(__file__) + '/_design/builds', db)
+    #push(dirname(__file__) + '/_design/builds', db)
 
 
 class Job(Document):
