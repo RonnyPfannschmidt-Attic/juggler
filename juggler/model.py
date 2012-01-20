@@ -13,6 +13,13 @@ def setup_design(db):
     #push(dirname(__file__) + '/_design/builds', db)
 
 
+
+
+def wrap(obj):
+    if 'doc_type' not in obj:
+        return obj
+    return globals()[obj['doc_type']].wrap(obj)
+
 class Job(Document):
     
     project = StringProperty()
@@ -29,17 +36,24 @@ class Job(Document):
 
 
 class Project(Document):
+    
     description = StringProperty()
     axis = DictProperty()
 
     def __repr__(self):
-        return '<Project %r>' % self.id
+        return '<Project %r>' % self._id
 
 class Build(Document):
     project = StringProperty()
     reason = StringProperty()
     added = DateTimeProperty(default=datetime.utcnow)
     axis = DictProperty()
+    result = StringProperty()
+
+    #: the current execution status of the build
+    #  the order is: prepare->building->complete
+
+    status = StringProperty(default='prepare')
 
     def __repr__(self):
         return '<Build {project!r} at {added:%Y/%m/%d %H:%M}>'.format(

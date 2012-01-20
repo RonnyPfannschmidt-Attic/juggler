@@ -3,16 +3,19 @@ from juggler import model
 
 
 def test_make_project(juggler):
-    project = model.Project(id='test')
+    project = model.Project(_id='test')
     build = model.Build(project='test', reason='test')
     juggler.store(project)
     juggler.store(build)
     print project
     print build
+    assert build.status == 'prepare'
     juggler.shedule_jobs(build)
+    assert build.status == 'building'
+
     jobs = juggler.db.view('jobs/all', schema=model.Job)
     job, = jobs
-
+    assert job.spec == {}
 
     #XXX: hack
     job.status = 'completed'
@@ -20,5 +23,11 @@ def test_make_project(juggler):
     juggler.store(job)
 
     print job
-    assert 0
+
+    build2 = model.Build(project='test',
+                         axis={
+                             '!patch': ['a', 'b', 'c'],
+                         })
+    juggler.shedule_jobs(build2)
+    assert len(juggler.db.view('jobs/all')) == 4
 
