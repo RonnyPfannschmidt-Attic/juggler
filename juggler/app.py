@@ -27,7 +27,8 @@ class Juggler(object):
         self.db.save_doc(obj)
 
     def shedule_jobs(self, build):
-
+        if not build._id:
+            self.store(build)
         bulk = [build]
         for spec in generate_specs(build.axis):
             job = model.Job(
