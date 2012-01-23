@@ -18,6 +18,7 @@ def generate_specs(axis):
 class Juggler(object):
     def __init__(self, db):
         self.db = db
+        model.FancyDocument.set_db(db) #XXX: kills multi instance per process
         self._consumer = Consumer(db, backend='gevent')
         self._consumer.wait_async(self._handle_db_change)
     def __repr__(self):

@@ -20,30 +20,22 @@ def wrap(obj):
         return obj
     return globals()[obj['doc_type']].wrap(obj)
 
-class Job(Document):
-    
-    project = StringProperty()
-    build = StringProperty()
-    added = DateTimeProperty(default=datetime.utcnow)
-    spec = DictProperty()
-
+class FancyDocument(Document):
+    _repr = '<{self.__class__.__name__} at 0x{id:x}>'
     def __repr__(self):
-        return '<Job {project!r} at {added:%Y/%m/%d %H:%M} {spec}>'.format(
-            project=self.project,
-            added=self.added,
-            spec=self.spec,
-        )
+        return self._repr.format(self=self, id=id(self)) #XXX: pain
 
 
-class Project(Document):
-    
+class Project(FancyDocument):
+    _repr = '<Project {self._id!r}>'
+
     description = StringProperty()
     axis = DictProperty()
 
-    def __repr__(self):
-        return '<Project %r>' % self._id
 
-class Build(Document):
+class Build(FancyDocument):
+    _repr = '<Build {self.project!r} at {self.added:%Y/%m/%d %H:%M}>'
+
     project = StringProperty()
     reason = StringProperty()
     added = DateTimeProperty(default=datetime.utcnow)
@@ -55,8 +47,15 @@ class Build(Document):
 
     status = StringProperty(default='prepare')
 
-    def __repr__(self):
-        return '<Build {project!r} at {added:%Y/%m/%d %H:%M}>'.format(
-            project=self.project,
-            added=self.added,
-        )
+
+
+class Job(FancyDocument):
+
+    _repr = '<Job {self.project!r} at {self.added:%Y/%m/%d %H:%M} {self.spec}>'
+
+    project = StringProperty()
+    build = StringProperty()
+    added = DateTimeProperty(default=datetime.utcnow)
+    spec = DictProperty()
+
+
