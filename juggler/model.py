@@ -6,6 +6,7 @@ from couchdbkit import (
     DateTimeProperty,
 )
 
+
 def setup_design(db):
     from couchdbkit.designer import push
     from os.path import dirname
@@ -13,28 +14,21 @@ def setup_design(db):
     #push(dirname(__file__) + '/_design/builds', db)
 
 
-
-
 def wrap(obj):
     if 'doc_type' not in obj:
         return obj
     return globals()[obj['doc_type']].wrap(obj)
 
-class FancyDocument(Document):
-    _repr = '<{self.__class__.__name__} at 0x{id:x}>'
-    def __repr__(self):
-        return self._repr.format(self=self, id=id(self)) #XXX: pain
 
-
-class Project(FancyDocument):
-    _repr = '<Project {self._id!r}>'
+class Project(Document):
+    _repr_ = '<Project {_id!r}>'
 
     description = StringProperty()
     axis = DictProperty()
 
 
-class Build(FancyDocument):
-    _repr = '<Build {self.project!r} at {self.added:%Y/%m/%d %H:%M}>'
+class Build(Document):
+    _repr_ = '<Build {project!r} at {added:%Y/%m/%d %H:%M}>'
 
     project = StringProperty()
     reason = StringProperty()
@@ -48,10 +42,9 @@ class Build(FancyDocument):
     status = StringProperty(default='prepare')
 
 
+class Job(Document):
 
-class Job(FancyDocument):
-
-    _repr = '<Job {self.project!r} at {self.added:%Y/%m/%d %H:%M} {self.spec}>'
+    _repr_ = '<Job {project!r} at {added:%Y/%m/%d %H:%M} {spec}>'
 
     project = StringProperty()
     build = StringProperty()

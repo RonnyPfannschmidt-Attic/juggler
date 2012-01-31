@@ -1,9 +1,9 @@
-import json
-import uuid
 import itertools
 from . import model
-from couchdbkit.consumer import Consumer
 
+import gevent
+
+from couchdbkit.changes import ChangesStream
 
 def generate_specs(axis):
     if not axis:
@@ -17,10 +17,11 @@ def generate_specs(axis):
 
 class Juggler(object):
     def __init__(self, db):
+        #XXX: assert gevent backend
         self.db = db
-        model.FancyDocument.set_db(db) #XXX: kills multi instance per process
-        self._consumer = Consumer(db, backend='gevent')
-        self._consumer.wait_async(self._handle_db_change)
+        self._background_job = gevent.spawn(self.handle_db_change)
+        gevent.sleep(0)
+
     def __repr__(self):
         return '<Juggler %r>'%self.db.dbname
 
@@ -38,20 +39,17 @@ class Juggler(object):
                 spec=spec,
             )
             bulk.append(job)
-            
 
         build.status = 'building'
         self.db.bulk_save(bulk, all_or_nothing=True)
 
+    def handle_db_change(self):
 
+        stream = ChangesStream(self.db, feed='continuous')
+        for data in stream:
+            obj = self.db.get(data['id'], wrapper=model.wrap)
+            if isinstance(obj, dict) and obj.get('_id').startswith('_design'):
+                return
+            print 'changed', obj
 
-    def _handle_db_change(self, line):
-        data = json.loads(line)
-        obj = self.db.get(data['id'], wrapper=model.wrap)
-        if isinstance(obj, dict) and obj.get('_id').startswith('_design'):
-            return
-        
-        print 'changed', obj
-
-        
 

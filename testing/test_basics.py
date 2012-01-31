@@ -1,7 +1,6 @@
 from juggler import model
 
 
-
 def test_make_project(juggler):
     project = model.Project(_id='test')
     build = model.Build(project='test', reason='test')
