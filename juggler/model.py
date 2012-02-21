@@ -1,4 +1,6 @@
+
 from datetime import datetime
+from reprtools import FormatRepr
 from couchdbkit import (
     Document,
     StringProperty,
@@ -21,14 +23,14 @@ def wrap(obj):
 
 
 class Project(Document):
-    _repr_ = '<Project {_id!r}>'
+    __repr__ = FormatRepr('<Project {_id!r}>')
 
     description = StringProperty()
     axis = DictProperty()
 
 
 class Build(Document):
-    _repr_ = '<Build {project!r} at {added:%Y/%m/%d %H:%M}>'
+    __repr__ = FormatRepr('<Build {project!r} at {added:%Y/%m/%d %H:%M}>')
 
     project = StringProperty()
     reason = StringProperty()
@@ -44,7 +46,7 @@ class Build(Document):
 
 class Job(Document):
 
-    _repr_ = '<Job {project!r} at {added:%Y/%m/%d %H:%M} {spec}>'
+    __repr__ = FormatRepr('<Job {project!r} at {added:%Y/%m/%d %H:%M} {spec}>')
 
     project = StringProperty()
     build = StringProperty()
