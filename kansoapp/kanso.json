@@ -2,9 +2,17 @@
     "name": "juggler",
     "version": "0.0.1",
     "description": "ehm",
+    "modules": ["lib", "views"],
+    "load": "lib/app",
+    "attachments": ["html", "css", "images", "lib", "index.html"],
     "dependencies": {
+        "attachments": null,
         "properties": null,
         "coffee-script-precompiler": null,
         "modules":null
+    },
+    "coffee-script": {
+        "modules": ["lib", "tests"],
+        "attachments": ["js"]
     }
 }
