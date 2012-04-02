@@ -1,0 +1,10 @@
+{
+    "name": "juggler",
+    "version": "0.0.1",
+    "description": "ehm",
+    "dependencies": {
+        "properties": null,
+        "coffee-script-precompiler": null,
+        "modules":null
+    }
+}

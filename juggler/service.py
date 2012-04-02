@@ -28,19 +28,20 @@ class Juggler(object):
     def store(self, obj):
         self.db.save_doc(obj)
 
-    def shedule_jobs(self, build):
-        if not build._id:
-            self.store(build)
-        bulk = [build]
-        for spec in generate_specs(build.axis):
-            job = model.Job(
-                project=build.project,
-                build=build._id,
+    def shedule_task(self, order):
+        assert '_id' in order:
+        bulk = [order]
+        for spec in generate_specs(order['axis']):
+            job = {
+                'type': 'juggler.task',
+                'arbiter': 'glas_process', # magic constant
+                'receipe': order['receipe'],
+                'order': order['_id'],
                 spec=spec,
             )
             bulk.append(job)
 
-        build.status = 'building'
+        order['status'] = 'building'
         self.db.bulk_save(bulk, all_or_nothing=True)
 
     def handle_db_change(self):
