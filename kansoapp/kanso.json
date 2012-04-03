@@ -4,9 +4,13 @@
     "description": "ehm",
     "modules": ["lib", "views"],
     "load": "lib/app",
-    "attachments": ["html", "css", "images", "lib", "index.html"],
+    "attachments": ["html", "css", "images", "lib", "js"],
     "dependencies": {
         "attachments": null,
+        "db": null,
+        "duality": null,
+        "jquery": null,
+        "jquery-flot": null,
         "properties": null,
         "coffee-script-precompiler": null,
         "modules":null
