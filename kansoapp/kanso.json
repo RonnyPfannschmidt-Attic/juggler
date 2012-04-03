@@ -2,13 +2,20 @@
     "name": "juggler",
     "version": "0.0.1",
     "description": "ehm",
-    "modules": ["lib", "views"],
+    "modules": ["lib"],
     "load": "lib/app",
-    "attachments": ["html", "css", "images", "lib", "js"],
+    "attachments": [],
+
+    "duality": { "base_template": "base.html" },
+    "dust": { "templates": "templates" },
+
     "dependencies": {
         "attachments": null,
+        "settings": null,
         "db": null,
+        "dust": null,
         "duality": null,
+        "duality-dust": null,
         "jquery": null,
         "jquery-flot": null,
         "properties": null,
@@ -16,7 +23,7 @@
         "modules":null
     },
     "coffee-script": {
-        "modules": ["lib", "tests"],
+        "modules": ["lib"],
         "attachments": ["js"]
     }
 }
