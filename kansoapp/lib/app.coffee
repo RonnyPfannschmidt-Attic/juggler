@@ -1,4 +1,4 @@
-{rewrites} = require 'lib/rewrites'
 
 module.exports =
-  rewrites: rewrites
+  rewrites: require "./rewrites"
+  shows: require "./shows"

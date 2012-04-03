@@ -3,8 +3,7 @@ from = (from, data) ->
    return data
 
 
-module.exports =
-  rewrites: [
-    from "/", to: "/html/index.html"
+module.exports = [
+    from "/", to: "_show/root"
     ]
 
