@@ -23,7 +23,6 @@
         "modules":null
     },
     "coffee-script": {
-        "modules": ["lib"],
-        "attachments": ["js"]
+        "modules": ["lib"]
     }
 }
