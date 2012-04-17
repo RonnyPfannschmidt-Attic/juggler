@@ -2,15 +2,10 @@ import py
 root = py.path.local(__file__).dirpath()
 kansoapp = root/'kansoapp'
 
-def pytest_sessionstart():
+def pytest_couchdbkit_push_app(dbname):
     py.std.subprocess.check_call(['kanso', 'install'], cwd=str(kansoapp))
-    py.std.subprocess.check_call(['kanso', 'push', 'pytest_juggler_replicate_source'], cwd=str(kansoapp))
+    py.std.subprocess.check_call(['kanso', 'push', dbname], cwd=str(kansoapp))
 
-
-def pytest_funcarg__couchdb(request):
-    db = request.getfuncargvalue('couchdb')
-    db.server.replicate('pytest_juggler_replicate_source', 'pytest_juggler')
-    return db
 def pytest_funcarg__juggler(request):
     db = request.getfuncargvalue('couchdb')
 

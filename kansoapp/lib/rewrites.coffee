@@ -1,9 +1,10 @@
-from = (from, data) ->
-   data.from = from
-   return data
-
 
 module.exports = [
-    from "/", to: "_show/root"
-    ]
+    from: ""
+    to: "_show/root"
+  ,
+    from: "a"
+    to: "_show/http_404"
+
+]
 
