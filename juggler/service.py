@@ -23,13 +23,13 @@ class Juggler(object):
         gevent.sleep(0)
 
     def __repr__(self):
-        return '<Juggler %r>'%self.db.dbname
+        return '<Juggler %r>' % self.db.dbname
 
     def store(self, obj):
         self.db.save_doc(obj)
 
     def shedule_task(self, order):
-        assert '_id' in order:
+        assert '_id' in order
         bulk = [order]
         for spec in generate_specs(order['axis']):
             job = {
