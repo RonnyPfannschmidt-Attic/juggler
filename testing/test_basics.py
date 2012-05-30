@@ -3,8 +3,8 @@ from juggler import model
 
 def test_make_project(juggler):
     project = model.Project(_id='test')
-    build = model.Build(project='test', reason='test')
-    juggler.store(project)
+    trigger = model.Trigger(project='test', reason='test')
+    juggler.store(trigger)
     juggler.store(build)
     print project
     print build
