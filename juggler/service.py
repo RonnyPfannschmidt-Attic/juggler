@@ -34,7 +34,7 @@ class Juggler(object):
         for spec in generate_specs(order['axis']):
             job = {
                 'type': 'juggler.task',
-                'arbiter': 'glas_process', # magic constant
+                'arbiter': 'glas_process',  # magic constant
                 'receipe': order['receipe'],
                 'order': order['_id'],
                 spec=spec,
