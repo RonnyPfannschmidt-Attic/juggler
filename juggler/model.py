@@ -32,7 +32,7 @@ class Step(Document):
 
     __repr__ = FormatRepr('<Step of {task} started {started:%Y-%m-%d}>')
 
-    task = StringProperty()
+    task = StringProperty(required=True)
     status = StringProperty(default='prepared')
     inputs = DictProperty()
     steper = StringProperty()
@@ -45,9 +45,4 @@ class Event(Document):
 
     step = StringProperty()
     index = IntegerProperty()
-
-
-
-
-
 
