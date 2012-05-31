@@ -13,7 +13,7 @@ def pytest_couchdbkit_push_app(dbname):
 def pytest_funcarg__juggler(request):
     db = request.getfuncargvalue('couchdb')
 
-    from juggler.app import Juggler
+    from juggler.service import Juggler
     app = Juggler(db)
     request.addfinalizer(app._background_job.kill)
     return app
