@@ -1,16 +1,23 @@
+import gevent
+import pytest
 from juggler import model
 
 
-def test_make_project(juggler):
+def test_make_project(couchdb, juggler):
+    pytest.skip('fuu')
     project = model.Project(_id='test')
     trigger = model.Trigger(project='test', reason='test')
-    juggler.store(trigger)
-    juggler.store(build)
+    couchdb.save_doc(project)
+    couchdb.save_doc(trigger)
     print project
-    print build
-    assert build.status == 'prepare'
-    juggler.shedule_jobs(build)
-    assert build.status == 'building'
+    print trigger
+    assert trigger.status == 'prepare'
+    juggler.start()
+    trigger.status = 'ready'
+    couchdb.save_doc(trigger)
+    gevent.sleep(.2)  # let the driver handle
+    trigger_newstate = couchdb.get(trigger.id)
+    assert trigger_newstate.status == 'building'
 
     jobs = juggler.db.view('jobs/all', schema=model.Job)
     job, = jobs
@@ -22,7 +29,7 @@ def test_make_project(juggler):
     juggler.store(job)
 
     print job
-
+    pass
     build2 = model.Build(project='test',
                          axis={
                              '!patch': ['a', 'b', 'c'],
