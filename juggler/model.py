@@ -1,11 +1,16 @@
 
-from couchdbkit.schema import Document #, DocumentSchemaProperty
+from couchdbkit import schema
 from couchdbkit.schema import (
     DateTimeProperty, StringProperty, IntegerProperty,
     DictProperty,
 )
 from reprtools import FormatRepr
 from datetime import datetime
+
+class Document(schema.Document):
+    _doc_type_attr = 'type'
+    type = StringProperty()
+
 
 class Driver(Document):
     doc_type = 'juggler:driver'
@@ -34,7 +39,6 @@ class Step(Document):
 
     task = StringProperty(required=True)
     status = StringProperty(default='prepared')
-    inputs = DictProperty()
     steper = StringProperty()
     started = DateTimeProperty(default=datetime.utcnow)
     finished = DateTimeProperty(default=None)
