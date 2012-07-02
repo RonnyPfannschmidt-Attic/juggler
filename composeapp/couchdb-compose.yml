@@ -11,12 +11,6 @@ externals:
 - name: underscore
   url: http://underscorejs.org/underscore.js
   attachment: js/vendor/underscore.js
-- name: backbone
-  url: http://backbonejs.org/backbone.js
-  attachment: js/vendor/backbone.js
-- name: backbone-couchdb
-  url: https://raw.github.com/janmonschke/backbone-couchdb/master/backbone-couchdb.coffee
-  attachment: js/vendor/backbone-couchdb.coffee
 
 
 attachments:
