@@ -1,0 +1,10 @@
+doc:
+    _id: _design/juggler
+
+load:
+- rewrites.yml
+- filters.yml
+
+
+attachments:
+- index.html
