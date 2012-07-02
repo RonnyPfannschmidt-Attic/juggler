@@ -1,2 +1,5 @@
 kansoapp/packages
+composeapp/.couchdb-compose-cache
+\.cache
 .*\.egg-info
+
