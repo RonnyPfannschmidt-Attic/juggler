@@ -1,14 +1,9 @@
 match_attrs.coffee: |
   (doc, req) ->
+    {_} = require 'underscore'
     data = req.query.tests
     data = JSON.parse data
-    checkitem = (item) ->
-      for key, value of item
-        if doc[key] != value
-          return false
-      return true
 
-    for item in data
-      if checkitem(item)
-        return yes
-    return no
+    keys = _.keys data
+    doc = _pick doc, keys
+    return _.equals doc, data
