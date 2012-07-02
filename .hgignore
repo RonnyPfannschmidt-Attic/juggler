@@ -1,5 +1,6 @@
 kansoapp/packages
 composeapp/.couchdb-compose-cache
+composeapp/.couchdb-compose-external-cache
 \.cache
 .*\.egg-info
 
