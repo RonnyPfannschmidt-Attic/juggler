@@ -11,10 +11,22 @@ class Document(schema.Document):
     _doc_type_attr = 'type'
     type = StringProperty()
 
+class Actor(Document):
+    doc_type = 'juggler:actor'
+    transitions = [
+        'new started',
+        'started stopped',
+        'stopped started',
+        'stopped disabled',
+        'disabled new',
+    ]
 
-class Driver(Document):
-    doc_type = 'juggler:driver'
 
+
+    name = StringProperty()
+
+    # one of new, stopped, started, disabled
+    state = StringProperty(default='new')
     current_host = StringProperty()
     current_pid = IntegerProperty()
     last_use = DateTimeProperty()
@@ -26,6 +38,21 @@ class Driver(Document):
 
 class Project(Document):
     doc_type = 'juggler:project'
+
+
+
+class Order(Document):
+    doc_type = 'juggler:order'
+    transitions = [
+
+        'receiving received',
+        'received invalid',
+        'received valid',
+        #XXX
+    ]
+        
+
+    state = StringProperty(default='receiving')
 
 
 class Task(Document):
