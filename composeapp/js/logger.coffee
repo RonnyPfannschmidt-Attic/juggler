@@ -8,6 +8,9 @@ class JugglerLogger
     ul.html(message)
     @el.append(ul)
 
+  clear: =>
+    @el.empty()
+
   @levels: ['debug','info', 'warn', 'error']
 
   @add_log_level_method: (level) =>
