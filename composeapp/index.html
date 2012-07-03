@@ -15,7 +15,6 @@
     <script>
       $(function(){
         log = new JugglerLogger($("#log"));
-        log.info('test')
         db = $.couch.db("db");
         db.uri = './db/';
         status_watch = new StatusCollectionView({el: $("#status ul")});
