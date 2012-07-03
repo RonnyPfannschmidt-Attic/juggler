@@ -11,9 +11,19 @@ externals:
 - name: underscore
   url: http://underscorejs.org/underscore.js
   attachment: js/vendor/underscore.js
+- name: backbone
+  url: http://backbonejs.org/backbone.js
+  attachment: js/vendor/backbone.js
+- name: blueprint
+  url: http://github.com/joshuaclayton/blueprint-css/zipball/master
+  unpack:
+    - from: blueprint/screen.css
+      to:   css/blueprint/screen.css
 
 
 attachments:
 - index.html
+- js/status.coffee
+- js/logger.coffee
 
 
