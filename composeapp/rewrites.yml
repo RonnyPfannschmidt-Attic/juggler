@@ -1,2 +1,9 @@
 - from: "/"
   to: "index.html"
+- from: "/js/*"
+  to: "/js/*"
+- from: "/css/*"
+  to: "/css/*"
+- from: "/db/*"
+  to: "../../*"
+

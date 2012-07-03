@@ -3,25 +3,54 @@
   <head>
     <title>CouchDB Juggler Master View</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel=stylesheet href="./css/blueprint/screen.css" type="text/css" media="screen, projection">
     <script src="/_utils/script/json2.js"></script>
     <script src="/_utils/script/sha1.js"></script>
     <script src="/_utils/script/jquery.js?1.4.2"></script>
     <script src="/_utils/script/jquery.couch.js?0.11.0"></script>
     <script src="./js/vendor/underscore.js"></script>
+    <script src="./js/vendor/backbone.js"></script>
+    <script src="./js/logger.js"></script>
+    <script src="./js/status.js"></script>
+    <script>
+      $(function(){
+        log = new JugglerLogger($("#log"));
+        log.info('test')
+        db = $.couch.db("db");
+        db.uri = './db/';
+        status_watch = new StatusCollectionView({el: $("#status ul")});
+        $("#status-demo").click(status_demo);
+
+      })
+    </script>
 
   </head>
-  <body>
-    <h1>Juggler CI</h1>
-    <div id=top></div>
-    <div id=sidebar>
-      <div id=menu>
-        <ul>
-          <li>projects
-          
-        </ul>
-      </div>
-      <div id=status></div>
-    </div>
-    <div id=main></div>
-  </body>
+<div class=container>
+
+<div id=top class="span-24">
+  <h1>Juggler CI</h1>
+</div>
+
+<div id=sidebar class="span-4">
+  <div id=menu>
+    <h4>Menu
+    <ul>
+      <li>blabla
+    </ul>
+  </div>
+  <div id=status>
+    <h4>Status</h3>
+    <ul></ul>
+  </div>
+</div>
+
+<div id=main class="span-18 last">
+  <a href=# id=status-demo>Start Demo</a>
+
+</div>
+
+<div id=footer class="span-24">
+  <ul id=log>
+  </ul>
+
 </html>
