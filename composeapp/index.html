@@ -18,7 +18,9 @@
         db = $.couch.db("db");
         db.uri = './db/';
         status_watch = new StatusCollectionView({el: $("#status ul")});
-        $("#status-demo").click(status_demo);
+        $("#status-demo-add").click(status_add);
+        $("#status-demo-remove").click(status_remove);
+        $("#log-clear").click(function(){log.clear()});
 
       })
     </script>
@@ -44,7 +46,9 @@
 </div>
 
 <div id=main class="span-18 last">
-  <a href=# id=status-demo>Start Demo</a>
+  <a href=# id=status-demo-add>Start Add Demo</a>
+  <a href=# id=status-demo-remove>Start Remove Demo</a>
+  <a href=# id=log-clear>Clear Log</a>
 
 </div>
 

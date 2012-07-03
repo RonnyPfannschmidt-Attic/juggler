@@ -28,7 +28,6 @@ class StatusView extends Backbone.View
       @$el.addClass 'worker'
     return @
 
-
 class StatusCollectionView extends Backbone.View
 
   initialize: =>
@@ -38,6 +37,24 @@ class StatusCollectionView extends Backbone.View
     @collection.bind 'reset', @render
     @render()
 
+    @changes = db.changes '0', include_docs: 'true'
+    @changes.onChange (changes) => @add_changes changes
+
+
+  add_changes: (changes) ->
+    push = []
+    for item in changes.results
+      log.info 'change ' + JSON.stringify item
+      if item.id[0] == "_"
+        0
+      else if item.deleted
+        item = @collection.get(item.id)
+        if item != undefined
+          @collection.remove(item)
+          item.view?.$el.remove()
+      else
+        @collection.add item.doc, merge: yes
+    return true
 
   render: () =>
     @$el.empty()
@@ -54,21 +71,33 @@ class StatusCollectionView extends Backbone.View
 
       @$el.append(el)
     else
-      view = @collection.at(index+1).view
+      view = @collection.at(index+1)?.view
       if view != undefined
-        $(el).appendBefore(view.$el)
+        el.insertBefore(view.$el)
       else
         @$el.append(el)
 
 
+status_add = ->
+  db.bulkSave {
+    docs: [
+      {'_id': 'fun' },
+      {'_id': 'bee', 'driver': 'fun'},
+      {'_id': 'fun2'},
+      {'_id': 'bee2', 'driver': 'fun'},
+      {'_id': 'bee3', 'driver': 'fun2'}
+    ]
+    },
+    success: (data) -> log.info "added\n" + JSON.stringify data
 
-status_demo = ->
-
-  status_watch.collection.add([
-    {'_id': 'fun', },
-    {'_id': 'bee', 'driver': 'fun'},
-    {'_id': 'fun2'},
-    {'_id': 'bee2', 'driver': 'fun'},
-    {'_id': 'bee3', 'driver': 'fun2'},
-  ])
-  return
+status_remove = ->
+    docs = ["fun", "fun2", "bee", "bee2", "bee3"]
+    db.allDocs
+      keys: docs
+      include_docs: yes
+      success: (res) ->
+        remove = for row in res.rows
+          if not row.value._deleted
+            {_id: row.id, _rev: row.value.rev}
+        db.bulkRemove {docs: remove} , success: (delres) ->
+          log.info "done\n" +JSON.stringify delres
