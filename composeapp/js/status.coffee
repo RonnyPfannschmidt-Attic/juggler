@@ -50,7 +50,6 @@ class StatusCollectionView extends Backbone.View
     item.view = view
     el = view.render().$el
     index = @collection.indexOf(item)
-    log.info "index #{index}/#{@collection.length} for item #{item.id} driver #{item.get('driver')}"
     if index == @collection.length-1
 
       @$el.append(el)
