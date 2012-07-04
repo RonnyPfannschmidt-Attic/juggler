@@ -4,6 +4,7 @@ doc:
 load:
 - rewrites.yml
 - filters.yml
+- views/status.yml
 
 externals:
 - name: underscore
