@@ -3,10 +3,13 @@ class JugglerLogger
     @el = el
 
   add_element: (level, message) =>
-    ul = $("<ul>")
-    ul.addClass(level)
-    ul.html(message)
-    @el.append(ul)
+    if console
+      console[level](message)
+    else
+      ul = $("<ul>")
+      ul.addClass(level)
+      ul.html(message)
+      @el.append(ul)
 
   clear: =>
     @el.empty()

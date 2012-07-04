@@ -37,7 +37,10 @@ class StatusCollectionView extends Backbone.View
     @collection.bind 'reset', @render
     @render()
 
-    @changes = db.changes '0', include_docs: 'true'
+    @changes = db.changes '0', 
+      include_docs: 'true'
+      filter: "_view"
+      view: 'juggler/status'
     @changes.onChange (changes) => @add_changes changes
 
 
@@ -45,9 +48,7 @@ class StatusCollectionView extends Backbone.View
     push = []
     for item in changes.results
       log.info 'change ' + JSON.stringify item
-      if item.id[0] == "_"
-        0
-      else if item.deleted
+      if item.deleted
         item = @collection.get(item.id)
         if item != undefined
           @collection.remove(item)
@@ -81,11 +82,11 @@ class StatusCollectionView extends Backbone.View
 status_add = ->
   db.bulkSave {
     docs: [
-      {'_id': 'fun' },
-      {'_id': 'bee', 'driver': 'fun'},
-      {'_id': 'fun2'},
-      {'_id': 'bee2', 'driver': 'fun'},
-      {'_id': 'bee3', 'driver': 'fun2'}
+      {_id: 'fun',  type: 'juggler:driver'},
+      {_id: 'bee',  type: 'juggler:worker', driver: 'fun'},
+      {_id: 'fun2', type: 'juggler:driver'},
+      {_id: 'bee2', type: 'juggler:worker', driver: 'fun'},
+      {_id: 'bee3', type: 'juggler:worker', driver: 'fun2'}
     ]
     },
     success: (data) -> log.info "added\n" + JSON.stringify data
