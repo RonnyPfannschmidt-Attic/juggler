@@ -82,11 +82,11 @@ class StatusCollectionView extends Backbone.View
 status_add = ->
   db.bulkSave {
     docs: [
-      {_id: 'fun',  type: 'juggler:driver'},
-      {_id: 'bee',  type: 'juggler:worker', driver: 'fun'},
-      {_id: 'fun2', type: 'juggler:driver'},
-      {_id: 'bee2', type: 'juggler:worker', driver: 'fun'},
-      {_id: 'bee3', type: 'juggler:worker', driver: 'fun2'}
+      {_id: 'fun',  type: 'juggler:warden'},
+      {_id: 'bee',  type: 'juggler:worker', warden: 'fun'},
+      {_id: 'fun2', type: 'juggler:warden'},
+      {_id: 'bee2', type: 'juggler:worker', warden: 'fun'},
+      {_id: 'bee3', type: 'juggler:worker', warden: 'fun2'}
     ]
     },
     success: (data) -> log.info "added\n" + JSON.stringify data
