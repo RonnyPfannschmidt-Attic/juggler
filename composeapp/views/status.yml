@@ -1,9 +1,9 @@
 map.coffee: |
   (doc) ->
-    if doc.type == 'juggler:driver'
+    if doc.type == 'juggler:warden'
       emit [doc.id], null
     if doc.type == 'juggler:worker'
-      emit [ doc.driver, doc._id ], null
+      emit [ doc.warden, doc._id ], null
     if doc._deleted
       emit [{}], null
     return
