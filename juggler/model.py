@@ -23,14 +23,10 @@ class Actor(Document):
 
 
 
+    
     name = StringProperty()
-
+    belongs_to = StringProperty()
     # one of new, stopped, started, disabled
-    state = StringProperty(default='new')
-    current_host = StringProperty()
-    current_pid = IntegerProperty()
-    last_use = DateTimeProperty()
-
     #: one of one of cron, shedule, inbox or make
     intent = StringProperty()
 
@@ -44,25 +40,28 @@ class Project(Document):
 class Order(Document):
     doc_type = 'juggler:order'
     transitions = [
-
         'receiving received',
         'received invalid',
         'received valid',
+        'valid ready',
+
+
         #XXX
     ]
         
 
-    state = StringProperty(default='receiving')
+    status = StringProperty(default='receiving')
 
 
 class Task(Document):
     doc_type = 'juggler:task'
-    __rerp__ = FormatRepr('<Task {belongs_to} {status}>')
+    __rerp__ = FormatRepr('<Task {_id] of {owner} - {status}>')
+    status=StringProperty(default="new")
 
 class Step(Document):
     doc_type = 'juggler:step'
 
-    __repr__ = FormatRepr('<Step of {task} started {started:%Y-%m-%d}>')
+    __repr__ = FormatRepr('<Step {_id} of {task} started {started:%Y-%m-%d}>')
 
     task = StringProperty(required=True)
     status = StringProperty(default='prepared')
