@@ -134,8 +134,27 @@ def test_claim_pending_task(db, conflict):
     db.save_doc(task)
     if conflict:
         db._.save_doc.side_effect = ResourceConflict()
-    workers.claim_pending_task(db, 'test')
+    result = workers.claim_pending_task(db, 'test')
     db.refresh(task)
     if not conflict:
         assert task.owner == 'test'
         assert task.status == 'claiming'
+        assert result._id == task._id
+
+
+@pytest.mark.xfail(run=False, reason='tricky')
+def test_approve_claimed_task(db):
+    pass
+
+
+def test_run_one_claimed_task(db):
+    task = model.Task(_id='claim', owner='o', status='claimed')
+    db.save_doc(task)
+
+    class fake_owner(object):
+        name = 'o'
+
+        def run(self, given):
+            assert given._id == task._id
+
+    workers.run_one_claimed_task(db, fake_owner())

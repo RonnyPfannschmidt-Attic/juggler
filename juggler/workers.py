@@ -75,6 +75,7 @@ def claim_pending_task(db, owner):
     task.owner = owner
     try:
         db.save_doc(task)
+        return task
     except ResourceConflict:
         # its important to ignore conflicts here
         # it just means something already claimed
@@ -83,10 +84,12 @@ def claim_pending_task(db, owner):
         pass
 
 
-def approve_claimed_task(db, watch_for):
+def approve_claimed_task(db):
     # this asumes only one claim manager is running ever
-    task, info = watch_for(db, Task, status='claiming')
+    # we operate on a first come first serve basis
+    task, info = db.watch_for(Task, status='claiming')
     all_docs = all_current_docs_for(task._id)
+
     for doc in all_docs:
         if doc._rev != task._rev and doc.status != 'claiming':
             # conflict already solved by one
@@ -95,10 +98,11 @@ def approve_claimed_task(db, watch_for):
             db.delete_doc(task)
             break
     else:
+        # no solution yet, accept the claim
         task.status = 'claimed'
         db.save_doc(task)
 
 
-def run_one_claimed_task(db, watch_for, owner):
-    task = watch_for(db, Task, status='claimed', owner=owner.name)
+def run_one_claimed_task(db, owner):
+    task, _ = db.watch_for(Task, status='claimed', owner=owner.name)
     owner.run(task)
