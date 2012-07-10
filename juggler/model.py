@@ -13,15 +13,17 @@ class Document(schema.StaticDocument):
     type = StringProperty()
 
 
+actor_transitions = [
+    'new started',
+    'started stopped',
+    'stopped started',
+    'stopped disabled',
+    'disabled new',
+]
+
+
 class Actor(Document):
     doc_type = 'juggler:actor'
-    transitions = [
-        'new started',
-        'started stopped',
-        'stopped started',
-        'stopped disabled',
-        'disabled new',
-    ]
 
     name = StringProperty()
     belongs_to = StringProperty()
@@ -36,17 +38,19 @@ class Project(Document):
     computed_steps = BooleanProperty()
 
 
+order_transitions = [
+    'receiving received',
+    'received invalid',
+    'received valid',
+    'valid ready',
+
+
+    #XXX
+]
+
+
 class Order(Document):
     doc_type = 'juggler:order'
-    transitions = [
-        'receiving received',
-        'received invalid',
-        'received valid',
-        'valid ready',
-
-
-        #XXX
-    ]
 
     status = StringProperty(default='receiving')
     axis = DictProperty()
@@ -54,11 +58,12 @@ class Order(Document):
 
 class Task(Document):
     doc_type = 'juggler:task'
-    __rerp__ = FormatRepr('<Task {index} of {owner} - {status}>')
+    __repr__ = FormatRepr('<Task {index} of {owner} - {status}>')
     status = StringProperty(default="new")
     project = StringProperty()
     arbiter = StringProperty()
     owner = StringProperty()
+    order = StringProperty()
     index = IntegerProperty()
     spec = DictProperty()
 
