@@ -22,22 +22,22 @@ def generate_specs(axis):
         yield dict(zip(names, values))
 
 
-def inbox_validate(db, watch_for):
-    order, _ = watch_for(db, Order, status='received')
+def inbox_validate(db):
+    order, _ = db.watch_for(Order, status='received')
     #XXX: validate
     order.status = 'valid'
     db.save_doc(order)
 
 
-def valid_order_prepare(db, watch_for):
-    order, _ = watch_for(db, Order, status='valid')
+def valid_order_prepare(db):
+    order, _ = db.watch_for(Order, status='valid')
     #XXX: fill in axis from project/task
     order.status = 'ready'
     db.save_doc(order)
 
 
-def ready_order_generate_tasks(db, watch_for):
-    order, _ = watch_for(db, Order, status='ready')
+def ready_order_generate_tasks(db):
+    order, _ = db.watch_for(Order, status='ready')
     bulk = [order]
     oid = order._id
     for idx, spec in enumerate(generate_specs(order.axis)):
@@ -56,8 +56,8 @@ def ready_order_generate_tasks(db, watch_for):
     db.bulk_save(bulk)
 
 
-def new_task_generate_steps(db, watch_for):
-    task, _ = watch_for(db, Task, status='new')
+def new_task_generate_steps(db):
+    task, _ = db.watch_for(Task, status='new')
     project = db.get(task.project, schema=Project)
     bulk = [task]
     if project.computed_steps:
@@ -69,13 +69,16 @@ def new_task_generate_steps(db, watch_for):
     db.bulk_save(bulk)
 
 
-def claim_pending_task(db, watch_for, owner):
-    task, _ = watch_for(db, Task, status='pending')
+def claim_pending_task(db, owner):
+    task, _ = db.watch_for(Task, status='pending')
     task.status = 'claiming'
     task.owner = owner
     try:
         db.save_doc(task)
     except ResourceConflict:
+        # its important to ignore conflicts here
+        # it just means something already claimed
+        # no need to generate more conflict
         #XXX log about failed claim
         pass
 
