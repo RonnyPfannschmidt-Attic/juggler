@@ -2,7 +2,7 @@
 from couchdbkit import schema
 from couchdbkit.schema import (
     DateTimeProperty, StringProperty, IntegerProperty,
-    DictProperty,
+    DictProperty, BooleanProperty,
 )
 from reprtools import FormatRepr
 from datetime import datetime
@@ -33,6 +33,8 @@ class Actor(Document):
 class Project(Document):
     doc_type = 'juggler:project'
 
+    computed_steps = BooleanProperty()
+
 
 class Order(Document):
     doc_type = 'juggler:order'
@@ -54,7 +56,9 @@ class Task(Document):
     doc_type = 'juggler:task'
     __rerp__ = FormatRepr('<Task {index} of {owner} - {status}>')
     status = StringProperty(default="new")
+    project = StringProperty()
     arbiter = StringProperty()
+    owner = StringProperty()
     index = IntegerProperty()
     spec = DictProperty()
 

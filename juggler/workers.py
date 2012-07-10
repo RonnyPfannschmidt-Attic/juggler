@@ -1,4 +1,5 @@
 from itertools import product
+from couchdbkit.exceptions import ResourceConflict
 from .model import Order, Task, Project
 
 
@@ -7,7 +8,8 @@ def all_current_docs_for(id, schema):
 
 
 def steps_from_template(task, project):
-    pass
+
+    return []
 
 
 def generate_specs(axis):
@@ -71,7 +73,11 @@ def claim_pending_task(db, watch_for, owner):
     task, _ = watch_for(db, Task, status='pending')
     task.status = 'claiming'
     task.owner = owner
-    db.save_doc(task)
+    try:
+        db.save_doc(task)
+    except ResourceConflict:
+        #XXX log about failed claim
+        pass
 
 
 def approve_claimed_task(db, watch_for):
