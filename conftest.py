@@ -13,6 +13,8 @@ def pytest_couchdbkit_push_app(dbname):
     ])
 
 def pytest_funcarg__juggler(request):
+
+    py.test.skip('disabled')
     db = request.getfuncargvalue('couchdb')
 
     from juggler.service import Juggler

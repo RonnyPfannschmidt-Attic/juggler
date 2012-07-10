@@ -7,7 +7,7 @@ from couchdbkit.schema import (
 from reprtools import FormatRepr
 from datetime import datetime
 
-class Document(schema.Document):
+class Document(schema.StaticDocument):
     _doc_type_attr = 'type'
     type = StringProperty()
 
@@ -20,7 +20,7 @@ class Actor(Document):
         'stopped disabled',
         'disabled new',
     ]
-
+    
 
 
     
@@ -51,12 +51,16 @@ class Order(Document):
         
 
     status = StringProperty(default='receiving')
+    axis = DictProperty()
 
 
 class Task(Document):
     doc_type = 'juggler:task'
-    __rerp__ = FormatRepr('<Task {_id] of {owner} - {status}>')
-    status=StringProperty(default="new")
+    __rerp__ = FormatRepr('<Task {index} of {owner} - {status}>')
+    status = StringProperty(default="new")
+    arbiter = StringProperty()
+    index = IntegerProperty()
+    spec = DictProperty()
 
 class Step(Document):
     doc_type = 'juggler:step'
