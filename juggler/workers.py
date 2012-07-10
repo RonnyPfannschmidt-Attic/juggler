@@ -1,4 +1,14 @@
-from .model import Order, Task, Step
+from itertools import product
+from .model import Order, Task, Project
+
+
+def all_current_docs_for(id, schema):
+    pass
+
+
+def steps_from_template(task, project):
+    pass
+
 
 def generate_specs(axis):
     if not axis:
@@ -6,7 +16,7 @@ def generate_specs(axis):
         return
 
     names, lists = zip(*axis.items())
-    for values in itertools.product(*lists):
+    for values in product(*lists):
         yield dict(zip(names, values))
 
 
@@ -39,18 +49,17 @@ def ready_order_generate_tasks(db, watch_for):
             index=idx,
         )
         bulk.append(job)
-    
+
     order.status = 'building'
     db.bulk_save(bulk)
 
 
-def new_task_generate_steps(db):
+def new_task_generate_steps(db, watch_for):
     task, _ = watch_for(db, Task, status='new')
-    project = project_of_task(db, task)
+    project = db.get(task.project, schema=Project)
     bulk = [task]
     if project.computed_steps:
-
-        bulk.append(compute_task)
+        raise NotImplementedError
         task.status = 'preparing'
     else:
         bulk += steps_from_template(project, task)
@@ -58,15 +67,14 @@ def new_task_generate_steps(db):
     db.bulk_save(bulk)
 
 
-def claim_pending_task(db, owner):
+def claim_pending_task(db, watch_for, owner):
     task, _ = watch_for(db, Task, status='pending')
     task.status = 'claiming'
     task.owner = owner
     db.save_doc(task)
 
 
-
-def approve_claimed_task(db):
+def approve_claimed_task(db, watch_for):
     # this asumes only one claim manager is running ever
     task, info = watch_for(db, Task, status='claiming')
     all_docs = all_current_docs_for(task._id)
@@ -81,7 +89,7 @@ def approve_claimed_task(db):
         task.status = 'claimed'
         db.save_doc(task)
 
-def run_one_claimed_task(db, owner):
+
+def run_one_claimed_task(db, watch_for, owner):
     task = watch_for(db, Task, status='claimed', owner=owner.name)
-    arbiter = get_arbiter(ownert, task)
-    arbiter.run()
+    owner.run(task)
