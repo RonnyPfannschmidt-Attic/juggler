@@ -15,7 +15,7 @@ def generate_specs(axis):
         yield {}
         return
 
-    names, lists = zip(*axis.items())
+    names, lists = zip(*sorted(axis.items()))
     for values in product(*lists):
         yield dict(zip(names, values))
 

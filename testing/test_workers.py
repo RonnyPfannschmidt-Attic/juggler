@@ -1,3 +1,4 @@
+import pytest
 from mock import Mock
 from juggler import workers
 from juggler import model
@@ -32,12 +33,23 @@ def test_valid_order_simple_ready():
     db.save_doc.assert_called_with(order)
 
 
-def test_ready_order_generate_tasks():
+@pytest.mark.parametrize(('axis', 'specs'), [
+    (None, [{}]),
+    ({'test': ['a', 'b']}, [
+        {'test': 'a'},
+        {'test':'b'}
+    ]),
+])
+def test_ready_order_generate_tasks(axis, specs):
     db = Mock()
-    order = model.Order(status='ready', axis=None)
+    order = model.Order(status='ready', axis=axis)
     watch_for = faked_watch_for(order)
     workers.ready_order_generate_tasks(db, watch_for)
     assert order.status == 'building'
-    saved_order, saved_task = db.bulk_save.call_args[0][0]
+
+    items = db.bulk_save.call_args[0][0]
+    saved_order = items.pop(0)
     assert saved_order is order
-    assert saved_task.spec == {}
+    for task, spec in zip(items, specs):
+
+        assert task.spec == spec
