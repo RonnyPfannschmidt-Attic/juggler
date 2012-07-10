@@ -7,9 +7,11 @@ from couchdbkit.schema import (
 from reprtools import FormatRepr
 from datetime import datetime
 
+
 class Document(schema.StaticDocument):
     _doc_type_attr = 'type'
     type = StringProperty()
+
 
 class Actor(Document):
     doc_type = 'juggler:actor'
@@ -20,10 +22,7 @@ class Actor(Document):
         'stopped disabled',
         'disabled new',
     ]
-    
 
-
-    
     name = StringProperty()
     belongs_to = StringProperty()
     # one of new, stopped, started, disabled
@@ -31,10 +30,8 @@ class Actor(Document):
     intent = StringProperty()
 
 
-
 class Project(Document):
     doc_type = 'juggler:project'
-
 
 
 class Order(Document):
@@ -48,7 +45,6 @@ class Order(Document):
 
         #XXX
     ]
-        
 
     status = StringProperty(default='receiving')
     axis = DictProperty()
@@ -62,6 +58,7 @@ class Task(Document):
     index = IntegerProperty()
     spec = DictProperty()
 
+
 class Step(Document):
     doc_type = 'juggler:step'
 
@@ -73,10 +70,10 @@ class Step(Document):
     started = DateTimeProperty(default=datetime.utcnow)
     finished = DateTimeProperty(default=None)
 
+
 class Event(Document):
     doc_type = 'juggler:event'
     __repr__ = FormatRepr(r'<Event {step} {index}>')
 
     step = StringProperty()
     index = IntegerProperty()
-
