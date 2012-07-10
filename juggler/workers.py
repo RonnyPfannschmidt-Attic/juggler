@@ -1,10 +1,9 @@
 from .model import Order, Task, Step
 
 
-
 def generate_specs(axis):
     if not axis:
-        yield None
+        yield {}
         return
 
     names, lists = zip(*axis.items())
@@ -26,17 +25,16 @@ def valid_order_prepare(db, watch_for):
     db.save_doc(order)
 
 
-
-
 def ready_order_generate_tasks(db, watch_for):
-    order, _ = watch_for(db, Order, state='ready')
+    order, _ = watch_for(db, Order, status='ready')
     bulk = [order]
     oid = order._id
-    for idx, spec in enumerate(generate_specs(order['axis'])):
+    for idx, spec in enumerate(generate_specs(order.axis)):
         #XXX: steps
-        job = model.Task(
+        job = Task(
             _id='%s.task%s' % (oid, idx),
-            arbiter='glas_process',  # magic constant
+            # currently unused magic constant
+            arbiter='glas_process',
             order=oid,
             spec=spec,
             index=idx,

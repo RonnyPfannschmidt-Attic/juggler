@@ -15,8 +15,8 @@ class Warden(object):
         if id in self.workers:
             return self.workers[id]
         else:
-            doc = db.get(id, woker
-        worker = Worker(self, doc):
+            doc = db.get(id, woker)
+        worker = Worker(self, doc)
 
 
 
