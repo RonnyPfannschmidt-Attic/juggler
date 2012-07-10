@@ -1,6 +1,5 @@
 from .model import Order, Task, Step
 
-
 def generate_specs(axis):
     if not axis:
         yield {}
@@ -43,6 +42,7 @@ def ready_order_generate_tasks(db, watch_for):
     
     order.status = 'building'
     db.bulk_save(bulk)
+
 
 def new_task_generate_steps(db):
     task, _ = watch_for(db, Task, status='new')
