@@ -88,7 +88,7 @@ def approve_claimed_task(db):
     # this asumes only one claim manager is running ever
     # we operate on a first come first serve basis
     task, info = db.watch_for(Task, status='claiming')
-    all_docs = all_current_docs_for(task._id)
+    all_docs = db.all_current_docs_for(task)
 
     for doc in all_docs:
         if doc._rev != task._rev and doc.status != 'claiming':
