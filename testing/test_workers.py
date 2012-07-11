@@ -174,4 +174,4 @@ def test_run_one_claimed_task(db):
         def run(self, given):
             assert given._id == task._id
 
-    workers.run_one_claimed_task(db, fake_owner())
+    workers.run_one_claimed_task(db, owner=fake_owner())
