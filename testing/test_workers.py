@@ -118,7 +118,7 @@ def test_new_task_generate_steps_programmatic_unimplemented(db):
 
 
 def test_new_task_generate_from_template(db):
-    project = model.Project()
+    project = model.Project(steps=[])
     db._.get.return_value = project
     task = model.Task(status='new', project='blabla')
     db.save_doc(task)

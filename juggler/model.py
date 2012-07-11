@@ -2,7 +2,7 @@
 from couchdbkit import schema
 from couchdbkit.schema import (
     DateTimeProperty, StringProperty, IntegerProperty,
-    DictProperty, BooleanProperty,
+    DictProperty, BooleanProperty, ListProperty,
 )
 from reprtools import FormatRepr
 from datetime import datetime
@@ -35,6 +35,7 @@ class Actor(Document):
 class Project(Document):
     doc_type = 'juggler:project'
 
+    steps = ListProperty()
     computed_steps = BooleanProperty()
 
 

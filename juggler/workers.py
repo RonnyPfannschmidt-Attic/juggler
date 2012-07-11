@@ -1,15 +1,11 @@
+import copy
 from itertools import product
 from couchdbkit.exceptions import ResourceConflict
 from .model import Order, Task, Project
 
 
-def all_current_docs_for(id, schema):
-    pass
-
-
-def steps_from_template(task, project):
-
-    return []
+def steps_from_template(project, task):
+    return copy.deepcopy(project.steps) or []
 
 
 def generate_specs(axis):
