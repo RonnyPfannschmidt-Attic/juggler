@@ -43,6 +43,10 @@ class FakedDatabase(object):
     def watch_for(self, type, **kw):
         return utils.watch_for(self.db, type, **kw)
 
+    def all_current_docs_for(self, item):
+        #XXX: real implementation
+        return []
+
     def save_doc(self, doc):
         #XXX: hack
         if 'watch_for' not in vars(self) and self.real_db is None:
@@ -142,8 +146,21 @@ def test_claim_pending_task(db, conflict):
         assert result._id == task._id
 
 
+def test_approve_claimed_task_simple(db):
+    task = model.Task(status='claiming', owner='test')
+    db.save_doc(task)
+    workers.approve_claimed_task(db)
+    db.refresh(task)
+    assert task.status == 'claimed'
+
+
 @pytest.mark.xfail(run=False, reason='tricky')
-def test_approve_claimed_task(db):
+def test_approve_claimed_task_two_exist():
+    pass
+
+
+@pytest.mark.xfail(run=False, reason='tricky')
+def test_approve_claimed_tasks_stat_conflict_solution():
     pass
 
 
