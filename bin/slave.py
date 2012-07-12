@@ -14,7 +14,7 @@ options:
 import docopt
 args = docopt.docopt(__doc__)
 
-from juggler.utils import get_database
+from juggler.handlers.utils import get_database
 from juggler.service import Juggler
 from juggler.simple_slave import run_once
 
