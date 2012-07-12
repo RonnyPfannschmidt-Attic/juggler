@@ -1,5 +1,6 @@
 import pytest
-from juggler import workers, model
+from juggler import model
+from juggler.handlers import shedule
 
 
 def test_new_task_generate_steps_programmatic_unimplemented(db):
@@ -9,7 +10,7 @@ def test_new_task_generate_steps_programmatic_unimplemented(db):
     db.save_doc(task)
     pytest.raises(
         NotImplementedError,
-        workers.new_task_generate_steps,
+        shedule.new_task_generate_steps,
         db)
 
 
@@ -18,7 +19,7 @@ def test_new_task_generate_from_template(db):
     db._.get.return_value = project
     task = model.Task(status='new', project='blabla')
     db.save_doc(task)
-    workers.new_task_generate_steps(db)
+    shedule.new_task_generate_steps(db)
     items = db._.bulk_save.call_args[0][0]
     saved_task = items.pop(0)
     db.refresh(task)
@@ -30,7 +31,7 @@ def test_new_task_generate_from_template(db):
 def test_approve_claimed_task_simple(db):
     task = model.Task(status='claiming', owner='test')
     db.save_doc(task)
-    workers.approve_claimed_task(db)
+    shedule.approve_claimed_task(db)
     db.refresh(task)
     assert task.status == 'claimed'
 
