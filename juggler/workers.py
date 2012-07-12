@@ -1,46 +1,9 @@
-import copy
-from itertools import product
-from functools import wraps
 from couchdbkit.exceptions import ResourceConflict
 from .model import Order, Task, Project
+from .utils import watches_for, generate_specs, steps_from_template
 
 from logbook import Logger
-
 log = Logger('workers')
-
-
-def steps_from_template(project, task):
-    return copy.deepcopy(project.steps) or []
-
-
-def generate_specs(axis):
-    if not axis:
-        yield {}
-        return
-
-    names, lists = zip(*sorted(axis.items()))
-    for values in product(*lists):
-        yield dict(zip(names, values))
-
-
-def watches_for(type, status, **wkw):
-    def decorator(func):
-        @wraps(func)
-        def watching_version(db, *k, **kw):
-            if k:
-                item, = k
-            else:
-                watch_kw = {}
-                for key, val in wkw.items():
-                    watch_kw[key] = val(kw)
-
-                item, _ = db.watch_for(type, status=status, **watch_kw)
-            return func(db, item, *k, **kw)
-        watching_version.type = type
-        watching_version.status = status
-        watching_version.func = func
-        return watching_version
-    return decorator
 
 
 @watches_for(Order, 'received')
