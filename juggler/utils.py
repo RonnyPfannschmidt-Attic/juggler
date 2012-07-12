@@ -1,4 +1,6 @@
-from functools import partial
+import copy
+from itertools import product
+from functools import partial, wraps
 from couchdbkit.changes import ChangesStream
 import couchdbkit
 
@@ -38,3 +40,37 @@ def watch_for(db, type, **kw):
             return type.wrap(doc), None  # XXX: conflicts
     else:
         raise ValueError
+
+
+def steps_from_template(project, task):
+    return copy.deepcopy(project.steps) or []
+
+
+def generate_specs(axis):
+    if not axis:
+        yield {}
+        return
+
+    names, lists = zip(*sorted(axis.items()))
+    for values in product(*lists):
+        yield dict(zip(names, values))
+
+
+def watches_for(type, status, **wkw):
+    def decorator(func):
+        @wraps(func)
+        def watching_version(db, *k, **kw):
+            if k:
+                item, = k
+            else:
+                watch_kw = {}
+                for key, val in wkw.items():
+                    watch_kw[key] = val(kw)
+
+                item, _ = db.watch_for(type, status=status, **watch_kw)
+            return func(db, item, *k, **kw)
+        watching_version.type = type
+        watching_version.status = status
+        watching_version.func = func
+        return watching_version
+    return decorator
