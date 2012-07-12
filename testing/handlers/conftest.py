@@ -37,7 +37,7 @@ class FakedDatabase(service.Juggler):
 
     def watch_for(self, type, **kw):
         if self.real_db:
-            return utils.watch_for(self.db, type, **kw)
+            return utils.watch_for(self.real_db, type, **kw)
         raise RuntimeError('no real db and not overridden')
 
     def all_current_docs_for(self, item):
