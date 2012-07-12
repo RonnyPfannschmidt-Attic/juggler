@@ -1,8 +1,6 @@
 import pytest
 from mock import Mock
-from juggler import workers
-from juggler import model
-from juggler import utils
+from juggler import workers, model, utils, service
 from couchdbkit.exceptions import ResourceConflict
 
 
@@ -22,7 +20,7 @@ def faked_watch_for(result, info=None):
     return faked_watch_for
 
 
-class FakedDatabase(object):
+class FakedDatabase(service.Juggler):
     def __init__(self, real_db=None):
         self.real_db = real_db
         if real_db is not None:
@@ -33,15 +31,15 @@ class FakedDatabase(object):
 
     def refresh(self, doc):
         if self.real_db:
-            schema = type(doc)
-            new_doc = self.real_db.get(doc._id, schema=schema)
-            doc._doc = new_doc._doc
+            super(FakedDatabase, self).refresh(doc)
 
     def get(self, *k, **kw):
         return self.db.get(*k, **kw)
 
     def watch_for(self, type, **kw):
-        return utils.watch_for(self.db, type, **kw)
+        if self.real_db:
+            return utils.watch_for(self.db, type, **kw)
+        raise RuntimeError('no real db and not overridden')
 
     def all_current_docs_for(self, item):
         #XXX: real implementation
@@ -138,7 +136,11 @@ def test_claim_pending_task(db, conflict):
     db.save_doc(task)
     if conflict:
         db._.save_doc.side_effect = ResourceConflict()
-    result = workers.claim_pending_task(db, owner='test')
+
+    class owner:
+        name = 'test'
+
+    result = workers.claim_pending_task(db, owner=owner)
     db.refresh(task)
     if not conflict:
         assert task.owner == 'test'

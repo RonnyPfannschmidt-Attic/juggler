@@ -1,12 +1,21 @@
 from functools import partial
 from couchdbkit.changes import ChangesStream
-
+import couchdbkit
 
 listen_new_changes = partial(
     ChangesStream,
     include_docs=True,
     filter='juggler/management',
+    feed='continuous',
+    timeout=3,
 )
+
+
+def get_database(name_or_uri):
+    if '/' in name_or_uri:
+        return couchdbkit.Database(name_or_uri)
+    else:
+        return couchdbkit.Server()[name_or_uri]
 
 
 def _compare(obj, kw):
