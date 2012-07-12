@@ -1,23 +1,29 @@
 import copy
+import json
 from itertools import product
 from functools import partial, wraps
 from couchdbkit.changes import ChangesStream
 import couchdbkit
 
-listen_new_changes = partial(
-    ChangesStream,
-    include_docs=True,
-    filter='juggler/management',
-    feed='continuous',
-    timeout=3,
-)
+def listen_new_changes(db, **kw):
+    r = db.res.get("_changes", 
+        include_docs=True,
+        filter='juggler/management',
+        feed='continuous',
+        **kw
+    )
 
+    r.should_close = True
+    with r.body_stream() as stream:
+        for line in stream:
+            yield json.loads(line)
+    
 
 def get_database(name_or_uri):
     if '/' in name_or_uri:
-        return couchdbkit.Database(name_or_uri)
+        return couchdbkit.Database(name_or_uri, backend='gevent')
     else:
-        return couchdbkit.Server()[name_or_uri]
+        return couchdbkit.Server(backend='gevent')[name_or_uri]
 
 
 def _compare(obj, kw):
@@ -29,13 +35,13 @@ def _compare(obj, kw):
 
 
 def watch_for(db, type, **kw):
-    #XXX: hack for tests
     changes = listen_new_changes(db, type=type._doc_type)
     for row in changes:
+        if 'last_seq' in row:
+            raise ValueError
         doc = row['doc']
         if doc['_id'][0] == '_':
             continue
-        print row['doc']
         if _compare(doc, kw):
             return type.wrap(doc), None  # XXX: conflicts
     else:
