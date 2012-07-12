@@ -4,6 +4,10 @@ from functools import wraps
 from couchdbkit.exceptions import ResourceConflict
 from .model import Order, Task, Project
 
+from logbook import Logger
+
+log = Logger('workers')
+
 
 def steps_from_template(project, task):
     return copy.deepcopy(project.steps) or []
@@ -88,8 +92,9 @@ def new_task_generate_steps(db, task):
 
 @watches_for(Task, 'pending')
 def claim_pending_task(db, task, owner):
+    log.info("claiming task {task._id}", task=task)
     task.status = 'claiming'
-    task.owner = owner
+    task.owner = owner.name
     try:
         db.save_doc(task)
         return task
