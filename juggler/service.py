@@ -12,9 +12,7 @@ class Juggler(object):
         return '<Juggler %r>' % self.db.dbname
 
     def watch_for(self, type, **kw):
-        return watch_for(self.db, type,
-                         timeout=5,
-                         **kw)
+        return watch_for(self.db, type, **kw)
 
     def save_doc(self, doc):
         self.db.save_doc(doc)
