@@ -1,0 +1,5 @@
+map.coffee: |
+  (doc) ->
+    if doc.status
+      emit [doc.type, doc.status], null
+    return

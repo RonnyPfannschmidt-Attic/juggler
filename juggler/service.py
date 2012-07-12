@@ -1,10 +1,14 @@
+import gevent
+
 class Juggler(object):
-    def __init__(self, db):
+    def __init__(self, db, name):
         #XXX: assert gevent backend
+        self.name
         self.db = db
 
     def __repr__(self):
         return '<Juggler %r>' % self.db.dbname
 
-    def store(self, obj):
-        self.db.save_doc(obj)
+    def sleep(self):
+        gevent.sleep(.5)
+        return gevent

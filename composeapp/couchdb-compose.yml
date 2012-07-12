@@ -5,6 +5,7 @@ load:
 - rewrites.yml
 - filters.yml
 - views/status.yml
+- views/stm.yml
 
 externals:
 - name: underscore
