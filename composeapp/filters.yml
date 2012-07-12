@@ -1,4 +1,4 @@
-match_attrs.coffee:|
+match_attrs.coffee: |
   (doc, req) ->
     {_} = require 'underscore'
     data = req.query.tests
@@ -9,4 +9,11 @@ match_attrs.coffee:|
       if not _.equals doc[key], value
         return false
     return true
+management.coffee: |
+  (doc, req) ->
+    return no unless doc.status?
+    return yes unless 'type' of req.query
+    return no unless req.querty.type == doc.type
+    return yes unless 'status' of req.query
+    return req.query.status == doc.status
 

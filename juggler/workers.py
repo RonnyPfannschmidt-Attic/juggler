@@ -23,11 +23,14 @@ def watches_for(type, status, **wkw):
     def decorator(func):
         @wraps(func)
         def watching_version(db, *k, **kw):
-            watch_kw = {}
-            for key, val in wkw.items():
-                watch_kw[key] = val(kw)
+            if *k:
+                item, = k
+            else:
+                watch_kw = {}
+                for key, val in wkw.items():
+                    watch_kw[key] = val(kw)
 
-            item, _ = db.watch_for(type, status=status, **watch_kw)
+                item, _ = db.watch_for(type, status=status, **watch_kw)
             return func(db, item, *k, **kw)
         watching_version.type = type
         watching_version.status = status
@@ -115,6 +118,13 @@ def approve_claimed_task(db, task):
         # no solution yet, accept the claim
         task.status = 'claimed'
         db.save_doc(task)
+
+
+
+@watches_for(Task, 'claimed', _id=lambda kw: kw['id'])
+def wait_for_one_claiming_task(db, task, id, owner):
+    if task.owner = owner:
+        return task
 
 
 @watches_for(Task, 'claimed', owner=lambda kw: kw['owner'].name)
