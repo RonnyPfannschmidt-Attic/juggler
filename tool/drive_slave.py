@@ -1,8 +1,8 @@
 import sys
 
 from juggler import model
-from juggler.utils import get_database
-from juggler import workers
+from juggler.handlers.utils import get_database
+from juggler.handlers import shedule
 from juggler import service
 
 
@@ -16,7 +16,8 @@ task = model.Task(
     project=project._id,
     spec=None,
     status='pending')
+print 'save'
 j.save_doc(task)
 
-
-workers.approve_claimed_task(j)
+print 'approve'
+shedule.approve_claimed_task(j)
