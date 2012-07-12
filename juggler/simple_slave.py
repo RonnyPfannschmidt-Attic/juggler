@@ -1,8 +1,8 @@
-from juggler import workers
+from juggler.handlers import slave
 
 
 def run_once(service):
-    claiming = workers.claim_pending_task(service, owner=service)
-    task = workers.wait_for_one_claiming_task(service, id=claiming._id)
+    claiming = slave.claim_pending_task(service, owner=service)
+    task = slave.wait_for_one_claiming_task(service, id=claiming._id)
     if task is not None:
-        workers.run_one_claimed_task(service, task, owner=service)
+        slave.run_one_claimed_task(service, task, owner=service)
