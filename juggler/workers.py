@@ -23,7 +23,7 @@ def watches_for(type, status, **wkw):
     def decorator(func):
         @wraps(func)
         def watching_version(db, *k, **kw):
-            if *k:
+            if k:
                 item, = k
             else:
                 watch_kw = {}
@@ -120,10 +120,9 @@ def approve_claimed_task(db, task):
         db.save_doc(task)
 
 
-
 @watches_for(Task, 'claimed', _id=lambda kw: kw['id'])
 def wait_for_one_claiming_task(db, task, id, owner):
-    if task.owner = owner:
+    if task.owner == owner:
         return task
 
 

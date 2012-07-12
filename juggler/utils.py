@@ -1,6 +1,12 @@
-listen_new_changes = partial(ChangeStream,
-                             include_docs=True,
-                             filter='juggler/management-status'
+from functools import partial
+from couchdbkit.changes import ChangesStream
+
+
+listen_new_changes = partial(
+    ChangesStream,
+    include_docs=True,
+    filter='juggler/management',
+)
 
 
 def _compare(obj, kw):
@@ -13,7 +19,8 @@ def _compare(obj, kw):
 
 def watch_for(db, type, **kw):
     #XXX: hack for tests
-    for row in db.all_docs(include_docs=True, filter):
+    changes = listen_new_changes(db, type=type._doc_type)
+    for row in changes:
         doc = row['doc']
         if doc['_id'][0] == '_':
             continue

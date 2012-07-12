@@ -19,5 +19,5 @@ def pytest_funcarg__juggler(request):
     db = request.getfuncargvalue('couchdb')
 
     from juggler.service import Juggler
-    app = Juggler(db)
+    app = Juggler(db, 'juggler')
     return app
