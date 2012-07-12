@@ -1,12 +1,13 @@
 import pytest
-from juggler import workers, model
+from juggler import model
+from juggler.handlers import inbox
 
 
 def test_inbox_simple_validate(db):
     #XXX: test a invalid case
     order = model.Order(_id='order', status='received')
     db.save_doc(order)
-    workers.inbox_validate(db)
+    inbox.order_validate(db)
     db.refresh(order)
     assert order.status == 'valid'
 
@@ -14,7 +15,7 @@ def test_inbox_simple_validate(db):
 def test_valid_order_simple_ready(db):
     order = model.Order(status='valid')
     db.save_doc(order)
-    workers.valid_order_prepare(db)
+    inbox.valid_order_prepare(db)
     db.refresh(order)
     assert order.status == 'ready'
 
@@ -29,7 +30,7 @@ def test_valid_order_simple_ready(db):
 def test_ready_order_generate_tasks(db, axis, specs):
     order = model.Order(status='ready', axis=axis)
     db.save_doc(order)
-    workers.ready_order_generate_tasks(db)
+    inbox.ready_order_generate_tasks(db)
     db.refresh(order)
     assert order.status == 'building'
 

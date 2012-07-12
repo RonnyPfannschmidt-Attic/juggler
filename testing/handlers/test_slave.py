@@ -1,5 +1,6 @@
 import pytest
-from juggler import workers, model
+from juggler import model
+from juggler.handlers import slave
 from couchdbkit.exceptions import ResourceConflict
 
 
@@ -14,7 +15,7 @@ def test_claim_pending_task(db, conflict):
     class owner:
         name = 'test'
 
-    result = workers.claim_pending_task(db, owner=owner)
+    result = slave.claim_pending_task(db, owner=owner)
     db.refresh(task)
     if not conflict:
         assert task.owner == 'test'
@@ -32,4 +33,4 @@ def test_run_one_claimed_task(db):
         def run(self, given):
             assert given._id == task._id
 
-    workers.run_one_claimed_task(db, owner=fake_owner())
+    slave.run_one_claimed_task(db, owner=fake_owner())

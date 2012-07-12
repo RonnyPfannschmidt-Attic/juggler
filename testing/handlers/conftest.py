@@ -1,5 +1,6 @@
 from mock import Mock
-from juggler import utils, service
+from juggler import service
+from juggler.handlers import utils
 
 
 def pytest_generate_tests(metafunc):

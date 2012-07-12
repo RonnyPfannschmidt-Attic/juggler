@@ -1,5 +1,5 @@
 import gevent
-from .utils import watch_for
+from .handlers.utils import watch_for
 
 
 class Juggler(object):
