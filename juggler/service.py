@@ -1,9 +1,10 @@
 import gevent
 
+
 class Juggler(object):
     def __init__(self, db, name):
         #XXX: assert gevent backend
-        self.name
+        self.name = name
         self.db = db
 
     def __repr__(self):

@@ -138,7 +138,7 @@ def test_claim_pending_task(db, conflict):
     db.save_doc(task)
     if conflict:
         db._.save_doc.side_effect = ResourceConflict()
-    result = workers.claim_pending_task(db, 'test')
+    result = workers.claim_pending_task(db, owner='test')
     db.refresh(task)
     if not conflict:
         assert task.owner == 'test'

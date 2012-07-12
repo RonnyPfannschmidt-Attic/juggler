@@ -1,6 +1,4 @@
-from couchdb.changes import ChangeStream
 from juggler import workers
-
 
 callbacks_workers = [
     'inbox_validate',
@@ -10,20 +8,13 @@ callbacks_workers = [
     'approve_claimed_task',
 ]
 
+
 def make_callbacks(items):
     result = {}
     for name in items:
         func = getattr(workers, name)
-        result[f.type._doc_type, f.status] = f
+        result[func.type._doc_type, func.status] = func
     return result
-
-
-
-
-                            
-
-def run_master(juggler
-    callbac
 
 
 def run_master(db, name, new_changes, callbacks=None):
@@ -32,10 +23,7 @@ def run_master(db, name, new_changes, callbacks=None):
 
     for change in new_changes:
         doc = change['doc']
-        lookup = doc['type', 'doc'
-
-
-
-    def start(self):
-
-
+        lookup = doc['type', 'doc']
+        call = callbacks.get(lookup)
+        if call is not None:
+            call(call.type.wrap(doc))
