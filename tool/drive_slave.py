@@ -7,6 +7,8 @@ from juggler import service
 
 
 db = get_database(sys.argv[1])
+print 'cleain'
+db.flush()
 j = service.Juggler(db, None)
 
 project = model.Project(steps=[])
