@@ -8,7 +8,7 @@ import sys
 import subprocess
 import gevent
 from gevent.socket import wait_read
-from glas_process.baseproc import Proc, makestep
+from .baseproc import Proc, makestep
 
 
 def prepare_python(proc, script, _id=None):
@@ -63,7 +63,7 @@ def stream_line_iter(fp):
                 remainder = ''
             for line in lines:
                 yield line
-            remainder  #XXX: pyflakes
+            remainder  # XXX: pyflakes
         wait_read(fp.fileno())
 
 
@@ -76,6 +76,7 @@ def _stream_reader(proc, stream, queue):
             'line': line,
         })
 
+
 def _exit_poller(proc, q):
     while True:
         gevent.sleep(.1)
@@ -85,11 +86,10 @@ def _exit_poller(proc, q):
             return
 
 
-
-
 def _joinall(queue, *greenlets):
     gevent.joinall(greenlets)
     queue.put(StopIteration)
+
 
 def start_subprocess(proc):
     step = proc.step
@@ -111,4 +111,3 @@ def start_subprocess(proc):
         popen.stdin.write(stdin)
     popen.stdin.close()
     return popen
-

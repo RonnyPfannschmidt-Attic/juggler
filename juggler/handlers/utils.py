@@ -8,7 +8,6 @@ import logbook
 log = logbook.Logger('utils')
 
 
-
 def listen_new_changes(db, **kw):
     r = db.res.get(
         path="_changes",
@@ -33,14 +32,15 @@ def get_database(name_or_uri):
 def _compare(obj, kw):
     log.debug('compare for \n {0}\n {1}', _cleaned(obj), kw)
     for k, v in kw.items():
-        got = obj.get(k)
         if obj.get(k) != v:
             return False
     else:
         return True
 
+
 def _cleaned(doc):
-    return dict((k,v) for k, v in doc.items() if v)
+    return dict((k, v) for k, v in doc.items() if v)
+
 
 def watch_for(db, type, **kw):
     changes = listen_new_changes(db, type=type._doc_type)
@@ -77,7 +77,7 @@ def watches_for(type, status, **wkw):
         def watching_version(db, *k, **kw):
             log.debug('{0} {1}', k, kw)
             if k:
-                item ,= k
+                item, = k
             else:
                 watch_kw = {}
                 for key, val in wkw.items():

@@ -4,7 +4,7 @@ import pytest
 import socket
 import gevent
 
-from glas_process.baseproc import makestep
+from juggler.process.baseproc import makestep
 
 
 try:
@@ -54,4 +54,3 @@ def test_simple_clone(procdir, path):
         intent='update_wd',
     )
     procdir.run(step_update)
-

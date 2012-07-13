@@ -1,8 +1,8 @@
-from glas_process.procdir import ProcDir
+from juggler.process.procdir import ProcDir
 from juggler.model import Task
 
-def test_getid(tmpdir):
 
+def test_getid(tmpdir):
     p = ProcDir(None, tmpdir, Task(_id='test'))
     id = p.get_id('python')
     assert id == 'test:python'

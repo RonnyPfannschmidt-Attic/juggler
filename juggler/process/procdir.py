@@ -1,5 +1,6 @@
 from collections import Counter
 
+
 class ProcDir(object):
     scminfo = None
 
