@@ -25,9 +25,9 @@ def listen_new_changes(db, **kw):
 
 def get_database(name_or_uri):
     if '/' in name_or_uri:
-        return couchdbkit.Database(name_or_uri)
+        return couchdbkit.Database(name_or_uri, backend='gevent')
     else:
-        return couchdbkit.Server()[name_or_uri]
+        return couchdbkit.Server(backend='gevent')[name_or_uri]
 
 
 def _compare(obj, kw):
