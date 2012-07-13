@@ -18,7 +18,7 @@ except:
 
 subprocess.check_call(
     ['couchdb-compose', 'push', sys.argv[1]],
-    cwd = path,
+    cwd=path,
 )
 
 j = service.Juggler(db, None)
