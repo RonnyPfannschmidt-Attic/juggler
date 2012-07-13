@@ -1,29 +1,29 @@
 import copy
 import json
 from itertools import product
-from functools import partial, wraps
-from couchdbkit.changes import ChangesStream
+from functools import wraps
 import couchdbkit
 
+
 def listen_new_changes(db, **kw):
-    r = db.res.get("_changes", 
+    r = db.res.get(
+        path="_changes",
         include_docs=True,
         filter='juggler/management',
         feed='continuous',
-        **kw
-    )
+        **kw)
 
     r.should_close = True
     with r.body_stream() as stream:
         for line in stream:
             yield json.loads(line)
-    
+
 
 def get_database(name_or_uri):
     if '/' in name_or_uri:
-        return couchdbkit.Database(name_or_uri, backend='gevent')
+        return couchdbkit.Database(name_or_uri)
     else:
-        return couchdbkit.Server(backend='gevent')[name_or_uri]
+        return couchdbkit.Server()[name_or_uri]
 
 
 def _compare(obj, kw):
