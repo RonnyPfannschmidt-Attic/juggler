@@ -13,6 +13,10 @@ class Juggler(object):
     def watch_for(self, type, **kw):
         return watch_for(self.db, type, **kw)
 
+    def all_current_docs_for(self, doc):
+        #XXX: implement
+        return []
+
     def save_doc(self, doc):
         self.db.save_doc(doc)
 

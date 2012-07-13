@@ -31,6 +31,6 @@ def run_once(service):
         owner=service)
     task = service.smart_watch(
         slave.wait_for_one_claiming_task,
-        id=claiming._id)
+        id=claiming._id, owner=service)
     if task is not None:
         slave.run_one_claimed_task(service, task, owner=service)
