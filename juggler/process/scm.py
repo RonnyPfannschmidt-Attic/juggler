@@ -1,6 +1,7 @@
 import anyvc
 from .baseproc import Proc
 
+
 class ScmProc(Proc):
 
     def create_or_pull(self):
@@ -39,5 +40,3 @@ class ScmProc(Proc):
 
     def create(self):
         self.spawn(self._run_intent)
-
-

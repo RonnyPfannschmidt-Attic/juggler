@@ -52,6 +52,7 @@ rewrites = [
     },
 ]
 
+
 def showone(name, *path):
     print name, path
     origin = globals()[name]
@@ -64,12 +65,12 @@ def showone(name, *path):
     print design
 
 
-def makeviews(data, path = ()):
+def makeviews(data, path=()):
     if isinstance(data, str):
         try:
             return coffeescript.compile(data, bare=True)
         except Exception, e:
-            e.args =  (path,) + e.args
+            e.args = (path,) + e.args
             raise
     else:
         return dict((k, makeviews(v, path + (k,))) for k, v in data.items())

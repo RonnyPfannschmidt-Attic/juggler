@@ -14,8 +14,8 @@ def makestep(procdir, _id, steper, **kw):
         task=procdir.task._id,
         **kw)
 
-class Proc(object):
 
+class Proc(object):
 
     def save_with_batch(self, doc):
         self.procdir.save_with_batch(doc)
@@ -32,10 +32,9 @@ class Proc(object):
         self.save_step()
 
     def spawn(self, func, *k, **kw):
-        res = gevent.spawn(func, *k,  **kw)
+        res = gevent.spawn(func, *k, **kw)
         self.greenlets.append(res)
         return res
-
 
     def emit(self, event=None, **kw):
         self.queue.put(event or kw)
@@ -53,7 +52,6 @@ class Proc(object):
             self.save_with_batch(doc)
             returncode = getattr(doc, 'returncode', None)
             if returncode is not None and self.step is not None:
-                
                 self.finish_step('complete' if returncode == 0 else 'failed')
 
     def finish_step(self, newstate):
@@ -80,4 +78,3 @@ class Proc(object):
 
     def kill(self):
         pass
-

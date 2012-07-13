@@ -1,9 +1,10 @@
 from __future__ import print_function
-from glas_process.subprocess import prepare_subprocess
+from juggler.process.subprocess import prepare_subprocess
+
 
 def test_lines_show(procdir):
     procdir.path.ensure('test')
-    ls = prepare_subprocess(procdir,['ls'], _id='ls:short')
+    ls = prepare_subprocess(procdir, ['ls'], _id='ls:short')
     ls_long = prepare_subprocess(procdir, ['ls', '-l'], _id='ls:long')
     procdir.run(ls)
     procdir.run(ls_long)
@@ -16,4 +17,3 @@ def test_lines_show(procdir):
             data = procdir.stream(step, stream)
             print('   ', repr(data))
             assert len(data.splitlines()) <= 2
-
