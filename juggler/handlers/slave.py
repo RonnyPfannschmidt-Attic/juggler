@@ -29,7 +29,11 @@ def claim_pending_task(db, task, owner):
 
 @watches_for(Task, 'claimed', _id=lambda kw: kw['id'])
 def wait_for_one_claiming_task(db, task, id, owner):
-    if task.owner == owner:
+    log.info(
+        "worker {owner.name} waited for {task._id} of {task.owner}",
+        owner=owner, task=task,
+    )
+    if task.owner == owner.name:
         return task
 
 
