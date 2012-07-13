@@ -4,6 +4,10 @@ from itertools import product
 from functools import wraps
 import couchdbkit
 
+import logbook
+log = logbook.Logger('utils')
+
+
 
 def listen_new_changes(db, **kw):
     r = db.res.get(
@@ -27,12 +31,16 @@ def get_database(name_or_uri):
 
 
 def _compare(obj, kw):
+    log.debug('compare for \n {0}\n {1}', _cleaned(obj), kw)
     for k, v in kw.items():
+        got = obj.get(k)
         if obj.get(k) != v:
             return False
     else:
         return True
 
+def _cleaned(doc):
+    return dict((k,v) for k, v in doc.items() if v)
 
 def watch_for(db, type, **kw):
     changes = listen_new_changes(db, type=type._doc_type)
@@ -42,6 +50,7 @@ def watch_for(db, type, **kw):
         doc = row['doc']
         if doc['_id'][0] == '_':
             continue
+        log.debug('got in {0}', _cleaned(doc))
         if _compare(doc, kw):
             return type.wrap(doc), None  # XXX: conflicts
     else:
@@ -66,15 +75,16 @@ def watches_for(type, status, **wkw):
     def decorator(func):
         @wraps(func)
         def watching_version(db, *k, **kw):
+            log.debug('{0} {1}', k, kw)
             if k:
-                item, = k
+                item ,= k
             else:
                 watch_kw = {}
                 for key, val in wkw.items():
                     watch_kw[key] = val(kw)
 
                 item, _ = db.watch_for(type, status=status, **watch_kw)
-            return func(db, item, *k, **kw)
+            return func(db, item, **kw)
         watching_version.type = type
         watching_version.status = status
         watching_version.func = func
