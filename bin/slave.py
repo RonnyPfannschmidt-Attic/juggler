@@ -10,14 +10,14 @@ parser.add_argument('database')
 parser.add_argument('name')
 sp = parser.add_subparsers()
 claim_parser = sp.add_parser('claim')
-claim.set_defaults(func=claim)
+claim_parser.set_defaults(func=claim)
 #XXX: configure in database
-claim.add_argument('--set-backlog', type=int, default=None)
+claim_parser.add_argument('--set-backlog', type=int, default=None)
 
 
 work_parser = sp.add_parser('work')
-work.set_defaults(func=work)
-work.add_argument('id')
+work_parser.set_defaults(func=work)
+work_parser.add_argument('id')
 
 simple_parser = sp.add_parser('simple')
 simple_parser.set_defaults(func=simple)
