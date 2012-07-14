@@ -9,11 +9,11 @@ tasks = {
         r"print 'test'",
         r'test\n',
     ),
-    'long':(
+    'long': (
         r"print 'a\nb'",
         r"a\nb\n",
     ),
-    'missing_final_newline':(
+    'missing_final_newline': (
         r"print 'a',",
         "a ",
     ),
