@@ -1,5 +1,5 @@
 from functools import partial
-from ..model.utils import make_id
+from ..model import utils, Step
 
 
 class ProcDir(object):
@@ -9,16 +9,21 @@ class ProcDir(object):
         self.db = db
         self.path = path
         self.task = task
-        self.get_id = partial(make_id, {}, task._id)
+        self.get_id = partial(utils.make_id, {}, task._id)
 
     def save_with_batch(self, doc):
         return self.db.save_doc(doc, batch='ok')
 
+    def find_steps(self):
+        return self.db.view('juggler/steps_of',
+                            key=self.task._id,
+                            include_docs=True,
+                            schema=Step).all()
+
     def find_streams(self, task):
         res = self.db.view('juggler/streams', group='true',
-                           startkey=[task], endkey=[task, {}])
-        it = iter(res)
-        for row in it:
+                           **utils.keylist_prefix(task)).all()
+        for row in res:
             key, value = row['key'], row['value']
             for item in value:
                 yield key[1], item

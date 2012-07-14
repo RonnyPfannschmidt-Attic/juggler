@@ -1,0 +1,5 @@
+map.coffee: |
+ (doc) ->
+   if doc.type == 'juggler:step'
+     emit doc.task, null
+   return
