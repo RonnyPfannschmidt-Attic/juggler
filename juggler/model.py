@@ -88,4 +88,5 @@ class Event(Document):
     _allow_dynamic_properties = True
 
     step = StringProperty()
+    task = StringProperty()
     index = IntegerProperty()

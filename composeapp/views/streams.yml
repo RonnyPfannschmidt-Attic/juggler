@@ -12,5 +12,10 @@ map.coffee: |
 
 reduce.coffee: |
   (key, values, rereduce) ->
-    {_} = require 'views/lib/underscore'
-    _.uniq _.compact _.flatten values
+    if rereduce
+      values = values.reduce Array.concat
+    uniq = {}
+    for item in values
+      uniq[item] = true
+    key for key of uniq
+
