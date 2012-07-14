@@ -23,7 +23,7 @@ class ProcDir(object):
         return self.db.save_doc(doc, batch='ok')
 
     def find_streams(self, task):
-        res = self.db.view('glas_process/streams', group='true',
+        res = self.db.view('juggler/streams', group='true',
                            startkey=[task], endkey=[task, {}])
         it = iter(res)
         for row in it:

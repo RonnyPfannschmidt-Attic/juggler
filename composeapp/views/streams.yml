@@ -1,0 +1,16 @@
+about: |
+  this view maps the output streams of steps into
+  short arrays of stream names
+
+map.coffee: |
+  (doc) ->
+    if doc.doc_type == "juggler:task"
+      emit [doc._id], null;
+    if doc.stream
+      emit [doc.task, doc.step], doc.stream
+    return
+
+reduce.coffee: |
+  (key, values, rereduce) ->
+    {_} = require 'views/lib/underscore'
+    _.uniq _.compact _.flatten values

@@ -2,25 +2,8 @@ import coffeescript
 
 views = {
     'streams': {
-        'map': """(doc) ->
-                if doc.doc_type == "juggler:Task"
-                    emit [doc._id], null;
-                if doc.stream
-                    emit [doc.task, doc.step], doc.stream
-                return
-        """,
-        'reduce': """(key, values, rereduce) ->
-                if rereduce
-                    items = values.reduce Array.concat
-                else
-                    items = values
-                unique = {};
-                for entry in items
-                    if entry != null
-                        unique[entry] = true;
-
-                key for key in unique
-        """
+        'map': """        """,
+        'reduce': """        """
     },
     'lines': {
         'map': '''(doc) ->

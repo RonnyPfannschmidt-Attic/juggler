@@ -6,7 +6,7 @@ def pytest_funcarg__procdir(request):
     from juggler.process.procdir import ProcDir
     from juggler.model import Task
 
-    task = Task(_id=nodeid, testcase=testname)
+    task = Task(_id=nodeid, owner=testname)
     db.save_doc(task)
     procdir = ProcDir(db, tmpdir.join('proc'), task)
     if 'no_create' not in request._pyfuncitem.keywords:
