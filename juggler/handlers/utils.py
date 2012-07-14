@@ -7,6 +7,7 @@ import couchdbkit
 import logbook
 log = logbook.Logger('utils')
 
+_CHANGES_EXTRA = {}
 
 def listen_new_changes(db, **kw):
     r = db.res.get(
@@ -14,7 +15,7 @@ def listen_new_changes(db, **kw):
         include_docs=True,
         filter='juggler/management',
         feed='continuous',
-        **kw)
+        **dict(_CHANGES_EXTRA,**kw))
 
     r.should_close = True
     with r.body_stream() as stream:

@@ -26,7 +26,6 @@ def ready_order_generate_tasks(db, order):
     bulk = [order]
     oid = order._id
     for idx, spec in enumerate(generate_specs(order.axis)):
-        #XXX: steps
         job = Task(
             _id='%s.task%s' % (oid, idx),
             # currently unused magic constant
