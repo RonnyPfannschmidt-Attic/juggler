@@ -1,4 +1,3 @@
-
 from couchdbkit import schema
 from couchdbkit.schema import (
     DateTimeProperty, StringProperty, IntegerProperty,
