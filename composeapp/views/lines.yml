@@ -4,5 +4,5 @@ about: |
 map.coffee: |
   (doc) ->
     if doc.stream and doc.line
-      emit [doc.step, doc.stream, doc.lineno]
+      emit [doc.step, doc.stream, doc.lineno], doc.line
     return

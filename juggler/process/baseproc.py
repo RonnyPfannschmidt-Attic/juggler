@@ -47,6 +47,8 @@ class Proc(object):
                 doc._id = '%s:%s' % (self.step._id, i)
             if not doc.step:
                 doc.step = self.step._id
+            if not doc.task:
+                doc.task = self.procdir.task._id
             doc.index = i
 
             self.save_with_batch(doc)

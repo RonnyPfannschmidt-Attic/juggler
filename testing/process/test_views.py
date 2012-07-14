@@ -1,19 +1,38 @@
 from __future__ import print_function
-from juggler.process.subprocess import prepare_subprocess
+import py
+import pytest
+from juggler.process.subprocess import prepare_python
 
 
-def test_lines_show(procdir):
-    procdir.path.ensure('test')
-    ls = prepare_subprocess(procdir, ['ls'], _id='ls:short')
-    ls_long = prepare_subprocess(procdir, ['ls', '-l'], _id='ls:long')
-    procdir.run(ls)
-    procdir.run(ls_long)
+tasks = {
+    'short': (
+        r"print 'test'",
+        r'test\n',
+    ),
+    'long':(
+        r"print 'a\nb'",
+        r"a\nb\n",
+    ),
+    'missing_final_newline':(
+        r"print 'a',",
+        "a ",
+    ),
+}
 
-    for task in ('ls:short', 'ls:long'):
-        print('task', task)
-        streams = procdir.find_streams(task)
-        for step, stream in streams:
-            print(' ', step, stream)
-            data = procdir.stream(step, stream)
-            print('   ', repr(data))
-            assert len(data.splitlines()) <= 2
+
+@pytest.mark.parametrize('task', sorted(tasks))
+def test_lines_show(procdir, task):
+    step = prepare_python(procdir, tasks[task][0], _id=task)
+    assert step.task is not None
+    procdir.db.save_doc(step)
+    procdir.run(step)
+    streams = list(procdir.find_streams(procdir.task._id))
+
+    py.std.pprint.pprint(procdir.db.view('juggler/lines').all())
+    py.std.pprint.pprint(procdir.db.view('juggler/streams', group=True).all())
+    (stepid, name), = streams
+    assert stepid == step._id
+    print('stream', task, name)
+    data = procdir.stream(stepid, name)
+    print('data', data)
+    assert len(data.splitlines()) <= 2
