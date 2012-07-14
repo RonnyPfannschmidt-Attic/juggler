@@ -10,7 +10,7 @@ class ScmProc(Proc):
         "clone or pull (as in hg pull)"
         target = self.procdir.path
         repo = self.step.repo
-
+        log.debug("clone or pull {.task}", self.step)
         if not target.check(dir=1):
             self.emit(start='clone')
             self.wd = anyvc.workdir.clone(repo, target)
@@ -26,6 +26,7 @@ class ScmProc(Proc):
 
     def update_wd(self):
         "update to target branch/rev"
+        log.debug('update wd {}', self.procdir.path)
         self.wd = anyvc.workdir.open(self.procdir.path)
         self.wd.update(revision=getattr(self.step, 'revision', None))
 
@@ -41,5 +42,4 @@ class ScmProc(Proc):
         self.emit(StopIteration)
 
     def create(self):
-
         self.spawn(self._run_intent)
