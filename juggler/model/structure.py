@@ -52,6 +52,7 @@ order_transitions = [
 class Order(Document):
     doc_type = 'juggler:order'
 
+    project = StringProperty()
     status = StringProperty(default='receiving')
     axis = DictProperty()
 
