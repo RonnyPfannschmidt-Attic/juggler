@@ -1,5 +1,7 @@
 import anyvc
 from .baseproc import Proc
+from logbook import Logger
+log = Logger('juggler scm')
 
 
 class ScmProc(Proc):
@@ -39,4 +41,5 @@ class ScmProc(Proc):
         self.emit(StopIteration)
 
     def create(self):
+
         self.spawn(self._run_intent)

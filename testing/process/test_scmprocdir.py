@@ -14,7 +14,7 @@ except socket.gaierror:
     net = False
 
 paths = [
-    py.path.local(__file__).dirpath().dirpath().strpath,
+    py.path.local(__file__).join('../../..').strpath,
     'http://bitbucket.org/RonnyPfannschmidt/hgdistver',
 ]
 
@@ -54,3 +54,8 @@ def test_simple_clone(procdir, path):
         intent='update_wd',
     )
     procdir.run(step_update)
+
+
+@pytest.mark.xfail(run=False, reason='not implemented')
+def test_simple_clone_failures():
+    pass
