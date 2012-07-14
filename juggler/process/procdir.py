@@ -1,4 +1,5 @@
-from collections import Counter
+from functools import partial
+from ..model.utils import make_id
 
 
 class ProcDir(object):
@@ -8,16 +9,7 @@ class ProcDir(object):
         self.db = db
         self.path = path
         self.task = task
-        self._idcounter = Counter()
-
-    def get_id(self, steper, given=None):
-        if given is not None:
-            return given
-        current = self._idcounter[steper]
-        self._idcounter.update([steper])
-        print current, steper
-        suffix = '_%s' % current if current else ""
-        return '%s:%s%s' % (self.task._id, steper, suffix)
+        self.get_id = partial(make_id, {}, task._id)
 
     def save_with_batch(self, doc):
         return self.db.save_doc(doc, batch='ok')
