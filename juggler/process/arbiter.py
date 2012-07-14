@@ -1,4 +1,4 @@
-from juggler.process.procdir import Procdir
+from juggler.process.procdir import ProcDir
 
 
 class Arbiter(object):
@@ -9,8 +9,8 @@ class Arbiter(object):
     def run(self, task):
         task.status = 'running'
         self.db.save_doc(task)  # XXX: might ressource conflict
-        project_dir = self.basedir.ensure(task.project, dir=1)
-        procdir = Procdir(self.db, project_dir, task)
+        project_dir = self.basedir.join(task.project)
+        procdir = ProcDir(self.db, project_dir, task)
         steps_for = procdir.find_steps()
         for step in steps_for:
             procdir.run(step)
