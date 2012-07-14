@@ -9,7 +9,7 @@ def test_scripted_end_to_end(juggler):
     project = Project(_id='project', steps=[
         {'steper': 'python', 'input':'print "hi"'},
     ])
-    order = Order(project='project', _id='order')
+    order = Order(project='project', _id='order', status='received')
 
     juggler.db.save_doc(project)
     juggler.db.save_doc(order)
