@@ -6,6 +6,15 @@
   to: "/css/*"
 - from: "/db/*"
   to: "../../*"
-- from: "/db/"
+- about:
+  from: "/db/"
   to: "../.."
 
+- about: |
+    maps a text stream uri to 
+    the corosponding view/list invocation
+  from': '/lines/:step/:stream'
+  to: '_list/lines/lines/'
+  query: 
+    startkey: [':step', ':stream']
+    endkey: [':step', ':stream', {}]
