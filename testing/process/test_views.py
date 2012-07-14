@@ -37,8 +37,10 @@ def test_lines_show(procdir, task):
     print('data', data)
     assert len(data.splitlines()) <= 2
 
+
 def test_find_steps(procdir):
     step = Step(task=procdir.task._id)
     procdir.db.save_doc(step)
     found = procdir.find_steps()
     assert found[0]._id == step._id
+    assert len(found) == 1
