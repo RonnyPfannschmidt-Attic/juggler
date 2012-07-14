@@ -13,6 +13,8 @@ class Document(schema.StaticDocument):
     type = StringProperty()
 
 
+
+
 actor_transitions = [
     'new started',
     'started stopped',
@@ -58,8 +60,9 @@ class Order(Document):
 
 
 class Task(Document):
-    doc_type = 'juggler:task'
     __repr__ = FormatRepr('<Task {index} of {owner} - {status}>')
+    doc_type = 'juggler:task'
+
     status = StringProperty(default="new")
     project = StringProperty()
     arbiter = StringProperty()
@@ -70,9 +73,9 @@ class Task(Document):
 
 
 class Step(Document):
-    doc_type = 'juggler:step'
-
     __repr__ = FormatRepr('<Step {_id} of {task} started {started:%Y-%m-%d}>')
+    doc_type = 'juggler:step'
+    _allow_dynamic_properties = True
 
     task = StringProperty(required=True)
     status = StringProperty(default='prepared')
@@ -82,8 +85,9 @@ class Step(Document):
 
 
 class Event(Document):
-    doc_type = 'juggler:event'
     __repr__ = FormatRepr(r'<Event {step} {index}>')
+    doc_type = 'juggler:event'
+    _allow_dynamic_properties = True
 
     step = StringProperty()
     index = IntegerProperty()
