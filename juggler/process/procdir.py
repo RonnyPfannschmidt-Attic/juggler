@@ -33,7 +33,7 @@ class ProcDir(object):
 
     def stream(self, step, stream):
         return self.db.list(
-            'glas_process/lines', 'lines',
+            'juggler/lines', 'lines',
             start_key=[step, stream],
             endkey=[step, stream, {}],
         )

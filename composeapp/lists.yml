@@ -1,0 +1,7 @@
+
+lines.coffee: |
+  (head, req) ->
+    start headers: { "Content-Type": "text/plain"}
+    while row = getRow()
+      send row.value
+    return

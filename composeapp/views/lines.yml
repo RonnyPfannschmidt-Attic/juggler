@@ -1,0 +1,8 @@
+about: |
+  create ordered listing of lines
+  per stream per step for easy listin
+map.coffee: |
+  (doc) ->
+    if doc.stream and doc.line
+      emit [doc.step, doc.stream, doc.lineno]
+    return
