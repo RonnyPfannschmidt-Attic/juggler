@@ -32,8 +32,6 @@ class FakedDatabase(service.Juggler):
         if self.real_db:
             super(FakedDatabase, self).refresh(doc)
 
-    def get(self, *k, **kw):
-        return self.db.get(*k, **kw)
 
     def watch_for(self, type, **kw):
         if self.real_db:
@@ -51,8 +49,6 @@ class FakedDatabase(service.Juggler):
         else:
             self.db.save_doc(doc)
 
-    def bulk_save(self, *k, **kw):
-        self.db.bulk_save(*k, **kw)
 
 
 def pytest_funcarg__db(request):

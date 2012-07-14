@@ -31,3 +31,9 @@ class Juggler(object):
         schema = type(doc)
         new_doc = self.real_db.get(doc._id, schema=schema)
         doc._doc = new_doc._doc
+
+    def bulk_save(self, *k, **kw):
+        self.db.bulk_save(*k, **kw)
+
+    def get(self, *k, **kw):
+        return self.db.get(*k, **kw)
