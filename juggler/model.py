@@ -13,8 +13,6 @@ class Document(schema.StaticDocument):
     type = StringProperty()
 
 
-
-
 actor_transitions = [
     'new started',
     'started stopped',
