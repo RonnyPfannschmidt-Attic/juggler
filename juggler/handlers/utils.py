@@ -5,11 +5,10 @@ from itertools import product
 from functools import wraps
 import couchdbkit
 
-
-
 import logbook
 log = logbook.Logger('utils')
 
+#: provate variable for test settings injection
 _CHANGES_EXTRA = {}
 
 def listen_new_changes(db, **kw):
