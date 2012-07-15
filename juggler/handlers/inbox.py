@@ -31,6 +31,7 @@ def ready_order_generate_tasks(db, order):
             # currently unused magic constant
             arbiter='glas_process',
             order=oid,
+            project=order.project,
             spec=spec,
             index=idx,
         )

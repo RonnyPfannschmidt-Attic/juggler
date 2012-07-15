@@ -37,7 +37,7 @@ def wait_for_one_claiming_task(db, task, id, owner):
         return task
 
 
-@watches_for(Task, 'claimed', owner=lambda kw: kw['owner'].name)
-def run_one_claimed_task(db, task, owner):
+@watches_for(Task, 'claimed', owner=lambda kw: kw['owner'])
+def run_one_claimed_task(db, task, owner, run):
     log.info('dispatching task {task._id}', task=task)
-    owner.run(task)
+    run(task)

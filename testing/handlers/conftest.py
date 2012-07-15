@@ -50,7 +50,6 @@ class FakedDatabase(service.Juggler):
             self.db.save_doc(doc)
 
 
-
 def pytest_funcarg__db(request):
     if request.param == 'direct':
         db = request.getfuncargvalue('couchdb')
