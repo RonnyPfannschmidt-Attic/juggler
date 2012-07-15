@@ -1,8 +1,11 @@
 import copy
 import json
+import math
 from itertools import product
 from functools import wraps
 import couchdbkit
+
+
 
 import logbook
 log = logbook.Logger('utils')
@@ -59,7 +62,13 @@ def watch_for(db, type, **kw):
 
 
 def steps_from_template(project, task):
-    return copy.deepcopy(project.steps) or []
+    steps = copy.deepcopy(project.steps) or []
+    precission = int(math.log(len(steps) * 10 + 1, 10))
+    for idx, step in enumerate(steps):
+        step['_id'] = "%s:step_%*d" % (task._id, precission, idx)
+        step['type'] = 'juggler:step'
+        step['index'] = idx
+    return steps
 
 
 def generate_specs(axis):
