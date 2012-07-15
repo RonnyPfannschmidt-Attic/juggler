@@ -32,7 +32,6 @@ class FakedDatabase(service.Juggler):
         if self.real_db:
             super(FakedDatabase, self).refresh(doc)
 
-
     def watch_for(self, type, **kw):
         if self.real_db:
             return utils.watch_for(self.real_db, type, **kw)

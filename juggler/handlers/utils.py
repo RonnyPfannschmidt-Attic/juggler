@@ -11,13 +11,14 @@ log = logbook.Logger('utils')
 #: provate variable for test settings injection
 _CHANGES_EXTRA = {}
 
+
 def listen_new_changes(db, **kw):
     r = db.res.get(
         path="_changes",
         include_docs=True,
         filter='juggler/management',
         feed='continuous',
-        **dict(_CHANGES_EXTRA,**kw))
+        **dict(_CHANGES_EXTRA, **kw))
 
     r.should_close = True
     with r.body_stream() as stream:
