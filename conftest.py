@@ -9,9 +9,11 @@ def pytest_runtest_setup(item):
     if extra:
         utils._CHANGES_EXTRA.update(extra.kwargs)
 
+
 def pytest_runtest_teardown():
     from juggler.handlers import utils
     utils._CHANGES_EXTRA = {}
+
 
 def pytest_funcarg__ghost_base(request):
     db = request.getfuncargvalue('couchdb')

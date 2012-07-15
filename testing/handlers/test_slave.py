@@ -4,6 +4,7 @@ from juggler.handlers import slave
 from couchdbkit.exceptions import ResourceConflict
 
 
+@pytest.mark.changes_extra(timeout=1)
 @pytest.mark.parametrize('conflict', [False, True],
                          ids=['pass', 'conflict'])
 def test_claim_pending_task(db, conflict):
@@ -23,14 +24,12 @@ def test_claim_pending_task(db, conflict):
         assert result._id == task._id
 
 
+@pytest.mark.changes_extra(timeout=1)
 def test_run_one_claimed_task(db):
     task = model.Task(_id='claim', owner='o', status='claimed')
     db.save_doc(task)
 
-    class fake_owner(object):
-        name = 'o'
+    def run(given):
+        assert given._id == task._id
 
-        def run(self, given):
-            assert given._id == task._id
-
-    slave.run_one_claimed_task(db, owner=fake_owner())
+    slave.run_one_claimed_task(db, owner='o', run=run)
