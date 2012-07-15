@@ -1,4 +1,3 @@
-from mock import Mock
 import pytest
 from juggler.handlers import inbox, shedule, slave
 from juggler.model import Project, Order
@@ -19,20 +18,17 @@ def test_scripted_end_to_end(juggler):
     inbox.ready_order_generate_tasks(juggler)
     shedule.new_task_generate_steps(juggler)
 
-    slave.claim_pending_task(juggler)
+    slave.claim_pending_task(juggler, owner=juggler)
 
     shedule.approve_claimed_task(juggler)
 
-    mock = Mock()
-    mock.name = juggler.name
-    mock.once = False
+    def run_task(task):
+        print task
+        assert not run_task.once
+        run_task.once = True
+        assert task.project == project._id
+        assert task.order == order._id
 
-    def side_effect(step):
-        if mock.once:
-            raise ValueError(step)
-        mock.once = True
-        print step
-        assert step.steper == 'python'
+    run_task.once = False
 
-    mock.run.side_effect = side_effect
-    slave.run_one_claimed_task(juggler, owner=mock)
+    slave.run_one_claimed_task(juggler, owner=juggler.name, run=run_task)
