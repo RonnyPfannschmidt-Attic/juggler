@@ -2,7 +2,10 @@ import pytest
 from juggler import model
 from juggler.handlers import inbox
 
+from testing import with_quick_change_timeout
 
+
+@with_quick_change_timeout
 def test_inbox_simple_validate(db):
     #XXX: test a invalid case
     order = model.Order(_id='order', status='received')
@@ -12,6 +15,7 @@ def test_inbox_simple_validate(db):
     assert order.status == 'valid'
 
 
+@with_quick_change_timeout
 def test_valid_order_simple_ready(db):
     order = model.Order(status='valid')
     db.save_doc(order)
@@ -20,6 +24,7 @@ def test_valid_order_simple_ready(db):
     assert order.status == 'ready'
 
 
+@with_quick_change_timeout
 @pytest.mark.parametrize(('axis', 'specs'), [
     (None, [{}]),
     ({'test': ['a', 'b']}, [
