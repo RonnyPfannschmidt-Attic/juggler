@@ -57,4 +57,3 @@ class Juggler(object):
             procdir.run(step)
         task.status = 'completed'
         self.save_doc(task)
-

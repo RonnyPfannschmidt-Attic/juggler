@@ -3,11 +3,14 @@ from .utils import watches_for, steps_from_template
 
 from logbook import Logger
 log = Logger('shedule')
-
+import gevent
+gevent
 
 @watches_for(Task, 'new')
 def new_task_generate_steps(db, task):
+    print task.project, 'get'
     project = db.get(task.project, schema=Project)
+    print project
     bulk = [task]
     if project.computed_steps:
         raise NotImplementedError
@@ -15,7 +18,9 @@ def new_task_generate_steps(db, task):
     else:
         bulk += steps_from_template(project, task)
         task.status = 'pending'
-    db.bulk_save(bulk)
+    with gevent.Timeout(1):
+        print 'save_bulk', bulk
+        db.bulk_save(bulk)
     log.info('generated steps for {task._id}', task=task)
 
 

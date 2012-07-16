@@ -12,18 +12,26 @@ log = logbook.Logger('utils', level='info')
 _CHANGES_EXTRA = {}
 
 
-def listen_new_changes(db, **kw):
+def listen_some_changes(db, **kw):
     r = db.res.get(
         path="_changes",
         include_docs=True,
         filter='juggler/management',
-        feed='continuous',
+        feed='longpoll',
         **dict(_CHANGES_EXTRA, **kw))
 
     r.should_close = True
     with r.body_stream() as stream:
-        for line in stream:
-            yield json.loads(line)
+        return json.load(stream)
+
+
+def listen_new_changes(db, **kw):
+    since = kw.pop('since', 0)
+    while True:
+        result = listen_some_changes(db, since=since, **kw)
+        since = result['last_seq']
+        for item in result['results']:
+            yield item
 
 
 def get_database(name_or_uri):
@@ -49,16 +57,12 @@ def _cleaned(doc):
 def watch_for(db, type, **kw):
     changes = listen_new_changes(db, type=type._doc_type)
     for row in changes:
-        if 'last_seq' in row:
-            raise ValueError
         doc = row['doc']
         if doc['_id'][0] == '_':
             continue
         log.debug('got in {0}', _cleaned(doc))
         if _compare(doc, kw):
             return type.wrap(doc), None  # XXX: conflicts
-    else:
-        raise ValueError
 
 
 def steps_from_template(project, task):
