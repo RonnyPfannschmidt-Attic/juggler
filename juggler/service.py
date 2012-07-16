@@ -1,11 +1,14 @@
 from .handlers.utils import watch_for
 import time
+import logbook
 
+log = logbook.Logger('juggler')
 
 class Juggler(object):
-    def __init__(self, db, name):
+    def __init__(self, db, name, path=None):
         self.name = name
         self.db = db
+        self.path = path
 
     def __repr__(self):
         return '<Juggler %r>' % self.db.dbname
@@ -37,3 +40,15 @@ class Juggler(object):
 
     def get(self, *k, **kw):
         return self.db.get(*k, **kw)
+
+    def run_task(self, task):
+        #XXX: not cancelable yet
+        assert self.path is not None
+        from juggler.process.procdir import ProcDir
+        procdir = ProcDir(self.db, self.path.join(task.project), task)
+        steps = procdir.find_steps()
+        assert steps
+        for step in steps:
+            log.info('run {task._id} step {step.index}',
+                     task=task, step=step)
+            procdir.run(step)

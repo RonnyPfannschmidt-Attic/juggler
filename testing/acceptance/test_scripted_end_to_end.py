@@ -1,13 +1,14 @@
 from juggler.handlers import inbox, shedule, slave
 from juggler.model import Project, Order
-
+from juggler.process.subprocess import python_template
 from testing import with_quick_change_timeout
 
 
 @with_quick_change_timeout
-def test_scripted_end_to_end(juggler):
+def test_scripted_end_to_end(juggler, tmpdir):
+    juggler.path = tmpdir
     project = Project(_id='project', steps=[
-        {'steper': 'python', 'input':'print "hi"'},
+        python_template('print "hi"'),
     ])
     order = Order(project='project', _id='order', status='received')
 
@@ -22,14 +23,8 @@ def test_scripted_end_to_end(juggler):
     slave.claim_pending_task(juggler, owner=juggler)
 
     shedule.approve_claimed_task(juggler)
+    slave.run_one_claimed_task(juggler,
+                               owner=juggler.name,
+                               run=juggler.run_task)
 
-    def run_task(task):
-        print task
-        assert not run_task.once
-        run_task.once = True
-        assert task.project == project._id
-        assert task.order == order._id
-
-    run_task.once = False
-
-    slave.run_one_claimed_task(juggler, owner=juggler.name, run=run_task)
+    assert 0

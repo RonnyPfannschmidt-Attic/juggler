@@ -1,5 +1,7 @@
 from datetime import datetime
 
+from reprtools import FormatRepr
+
 import gevent
 from gevent.queue import Queue
 
@@ -7,6 +9,8 @@ from juggler.model import utils
 
 
 class Proc(object):
+
+    __repr__ = FormatRepr('<Proc {step._id} - {step.status}>')
 
     def save_with_batch(self, doc):
         self.procdir.save_with_batch(doc)
@@ -51,7 +55,9 @@ class Proc(object):
     def wait(self):
         self.start()
         self._control.join()
-        gevent.joinall(self.greenlets)
+        gevent.joinall(self.greenlets, raise_error=True)
+        if not self._control.successful():
+            raise self._control.exception
 
     def create(self):
         raise NotImplementedError

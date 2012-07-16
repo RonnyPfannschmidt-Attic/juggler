@@ -6,7 +6,7 @@ from functools import wraps
 import couchdbkit
 
 import logbook
-log = logbook.Logger('utils')
+log = logbook.Logger('utils', level='info')
 
 #: provate variable for test settings injection
 _CHANGES_EXTRA = {}
@@ -68,6 +68,7 @@ def steps_from_template(project, task):
         step['_id'] = "%s:step_%*d" % (task._id, precission, idx)
         step['type'] = 'juggler:step'
         step['index'] = idx
+        step['task'] = task._id
     return steps
 
 
