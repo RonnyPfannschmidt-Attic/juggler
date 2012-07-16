@@ -8,12 +8,11 @@ import sys
 import subprocess
 import gevent
 from gevent.socket import wait_read
-from .baseproc import Proc, makestep
+from .baseproc import Proc
 
 
-def prepare_python(proc, script, _id=None):
-    return makestep(
-        proc, _id,
+def python_template(script):
+    return dict(
         variant='python',
         steper='popen',
         args=['python', '-'],
@@ -21,9 +20,8 @@ def prepare_python(proc, script, _id=None):
     )
 
 
-def prepare_subprocess(proc, cmd, _id=None):
-    return makestep(
-        proc, _id,
+def subprocess_template(cmd):
+    return dict(
         variant='subprocess',
         steper='popen',
         args=[str(x) for x in cmd],

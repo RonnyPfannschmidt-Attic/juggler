@@ -1,7 +1,7 @@
 from __future__ import print_function
 import py
 import pytest
-from juggler.process.subprocess import prepare_python
+from juggler.process.subprocess import python_template
 from juggler.model import Step
 
 tasks = {
@@ -22,8 +22,8 @@ tasks = {
 
 @pytest.mark.parametrize('task', sorted(tasks))
 def test_lines_show(procdir, task):
-    step = prepare_python(procdir, tasks[task][0], _id=task)
-    assert step.task is not None
+    step = Step(_id=task, task=task,
+                **python_template(tasks[task][0]))
     procdir.db.save_doc(step)
     procdir.run(step)
     streams = list(procdir.find_streams(procdir.task._id))

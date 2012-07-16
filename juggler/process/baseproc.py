@@ -3,16 +3,7 @@ from datetime import datetime
 import gevent
 from gevent.queue import Queue
 
-from juggler.model import Step, Event
-
-
-def makestep(procdir, _id, steper, **kw):
-    return Step(
-        _id=_id,
-        status='prepared',
-        steper=steper,
-        task=procdir.task._id,
-        **kw)
+from juggler.model import utils
 
 
 class Proc(object):
@@ -29,7 +20,6 @@ class Proc(object):
         self.greenlets = []
         self._control = None
         self.step = step
-        self.save_step()
 
     def spawn(self, func, *k, **kw):
         res = gevent.spawn(func, *k, **kw)
@@ -41,15 +31,7 @@ class Proc(object):
 
     def _store(self):
         for i, doc in enumerate(self.queue):
-            if isinstance(doc, dict):
-                doc = Event(**doc)
-            if not doc._id:
-                doc._id = '%s:%s' % (self.step._id, i)
-            if not doc.step:
-                doc.step = self.step._id
-            if not doc.task:
-                doc.task = self.procdir.task._id
-            doc.index = i
+            doc = utils.complete_event(doc, i, self.step, self.procdir.task)
 
             self.save_with_batch(doc)
             returncode = getattr(doc, 'returncode', None)
