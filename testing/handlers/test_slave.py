@@ -1,10 +1,11 @@
 import pytest
+from couchdbkit.exceptions import ResourceConflict
 from juggler import model
 from juggler.handlers import slave
-from couchdbkit.exceptions import ResourceConflict
+from testing import with_quick_change_timeout
 
 
-@pytest.mark.changes_extra(timeout=1)
+@with_quick_change_timeout
 @pytest.mark.parametrize('conflict', [False, True],
                          ids=['pass', 'conflict'])
 def test_claim_pending_task(db, conflict):
@@ -24,7 +25,7 @@ def test_claim_pending_task(db, conflict):
         assert result._id == task._id
 
 
-@pytest.mark.changes_extra(timeout=1)
+@with_quick_change_timeout
 def test_run_one_claimed_task(db):
     task = model.Task(_id='claim', owner='o', status='claimed')
     db.save_doc(task)

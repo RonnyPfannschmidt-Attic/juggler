@@ -1,9 +1,10 @@
-import pytest
 from juggler.handlers import inbox, shedule, slave
 from juggler.model import Project, Order
 
+from testing import with_quick_change_timeout
 
-@pytest.mark.changes_extra(timeout=1)
+
+@with_quick_change_timeout
 def test_scripted_end_to_end(juggler):
     project = Project(_id='project', steps=[
         {'steper': 'python', 'input':'print "hi"'},
