@@ -4,6 +4,7 @@ import logbook
 
 log = logbook.Logger('juggler')
 
+
 class Juggler(object):
     def __init__(self, db, name, path=None):
         self.name = name
@@ -48,7 +49,12 @@ class Juggler(object):
         procdir = ProcDir(self.db, self.path.join(task.project), task)
         steps = procdir.find_steps()
         assert steps
+        task.status = 'building'
+        self.save_doc(task)
         for step in steps:
             log.info('run {task._id} step {step.index}',
                      task=task, step=step)
             procdir.run(step)
+        task.status = 'completed'
+        self.save_doc(task)
+
