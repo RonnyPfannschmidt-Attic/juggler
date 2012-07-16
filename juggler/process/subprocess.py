@@ -1,4 +1,4 @@
-from __future__ import print_function, absolute_import
+from __future__ import absolute_import
 
 import os
 import fcntl
@@ -91,6 +91,7 @@ def _joinall(queue, *greenlets):
 
 def start_subprocess(proc):
     step = proc.step
+    proc.procdir.path.ensure(dir=1)
     popen = subprocess.Popen(
         step.args,
         cwd=str(proc.procdir.path),
