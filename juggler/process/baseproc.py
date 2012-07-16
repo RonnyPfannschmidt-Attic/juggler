@@ -8,7 +8,7 @@ from juggler.model import Step, Event
 
 def makestep(procdir, _id, steper, **kw):
     return Step(
-        _id=procdir.get_id(steper, _id),
+        _id=_id,
         status='prepared',
         steper=steper,
         task=procdir.task._id,

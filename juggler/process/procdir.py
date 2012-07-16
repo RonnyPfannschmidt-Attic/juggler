@@ -1,5 +1,13 @@
-from functools import partial
 from ..model import utils, Step
+
+
+def default_lookup():
+    from .scm import ScmProc
+    from .subprocess import SubProcessProc
+    return {
+        'popen': SubProcessProc,
+        'scm': ScmProc,
+    }
 
 
 class ProcDir(object):
@@ -9,7 +17,7 @@ class ProcDir(object):
         self.db = db
         self.path = path
         self.task = task
-        self.get_id = partial(utils.make_id, {}, task._id)
+        self.lookup = default_lookup()
 
     def save_with_batch(self, doc):
         return self.db.save_doc(doc, batch='ok')
@@ -36,24 +44,5 @@ class ProcDir(object):
         )
 
     def run(self, doc):
-
-        from .scm import ScmProc
-        from .subprocess import SubProcessProc
-        lookup = {
-            'popen': SubProcessProc,
-            'scm': ScmProc,
-        }
-
-        proc = lookup[doc.steper](self, doc)
-
+        proc = self.lookup[doc.steper](self, doc)
         return proc.run()
-
-
-def ProcBatch(object):
-
-    def __init__(self, procdir):
-        self.procdir = procdir
-
-    @property
-    def path(self):
-        return self.procdir.path
