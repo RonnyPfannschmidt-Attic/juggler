@@ -4,7 +4,7 @@ import pytest
 import socket
 import gevent
 
-from juggler.process.baseproc import makestep
+from juggler.model import Step
 
 
 try:
@@ -26,8 +26,9 @@ def test_simple_clone(procdir, path):
         pytest.skip('no net')
     assert not procdir.path.check()
 
-    step = makestep(
-        procdir, None,
+    step = Step(
+        _id='clone',
+        task=procdir.task._id,
         steper='scm',
         repo=path,
         branch=None,
@@ -37,8 +38,9 @@ def test_simple_clone(procdir, path):
     procdir.run(step)
     gevent.sleep(0)
     assert procdir.path.check()
-    step_repeat = makestep(
-        procdir, None,
+    step_repeat = Step(
+        _id='clone_2',
+        task=procdir.task._id,
         steper='scm',
         repo=path,
         branch=None,
@@ -46,8 +48,9 @@ def test_simple_clone(procdir, path):
     )
     procdir.run(step_repeat)
 
-    step_update = makestep(
-        procdir, None,
+    step_update = Step(
+        _id='update',
+        task=procdir.task._id,
         steper='scm',
         repo=path,
         branch=None,

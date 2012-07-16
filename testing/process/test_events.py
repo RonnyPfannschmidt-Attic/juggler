@@ -1,5 +1,6 @@
 import copy
-from juggler.process.subprocess import prepare_python, prepare_subprocess
+from juggler.model import Step
+from juggler.process.subprocess import python_template, subprocess_template
 
 
 def pytest_funcarg__procdir(request):
@@ -28,11 +29,11 @@ def check_events(procdir, checks):
 
 def test_run_simple_process(procdir):
     procdir.path.ensure('somefile')
-    step = prepare_subprocess(procdir, ['ls'], _id='the_ls')
+    step = Step(_id='the_ls',
+                task=procdir.task._id,
+                **subprocess_template(['ls']))
     procdir.run(step)
     checks = [
-        ('type', "juggler:step",
-         'status', 'prepared'),
         ('type', "juggler:step",
          'status', "running"),
         ('line', 'somefile\n'),
@@ -44,11 +45,11 @@ def test_run_simple_process(procdir):
 
 
 def test_simple_process_failure(procdir):
-    step = prepare_subprocess(procdir, ['false'])
+    step = Step(
+        task=procdir.task._id,
+        **subprocess_template(['false']))
     procdir.run(step)
     checks = [
-        ('type', "juggler:step",
-         'status', 'prepared'),
         ('type', "juggler:step",
          'status', "running"),
         ('returncode', 1),
@@ -59,10 +60,10 @@ def test_simple_process_failure(procdir):
 
 
 def test_cat_process(procdir):
-    doc = prepare_subprocess(
-        procdir,
-        ['head', '-n', '30', '/etc/services'],
-        _id='cat')
+    doc = Step(
+        _id='cat',
+        task=procdir.task._id,
+        **subprocess_template(['head', '-n', '30', '/etc/services']))
     procdir.run(doc)
     for event in procdir._events:
         if hasattr(event, 'lineno'):
@@ -72,11 +73,11 @@ def test_cat_process(procdir):
 
 
 def test_python(procdir):
-    doc = prepare_python(procdir, 'print 1\n')
+    doc = Step(
+        task=procdir.task._id,
+        **python_template('print 1\n'))
     procdir.run(doc)
     checks = [
-        ('type', "juggler:step",
-         'status', 'prepared'),
         ('type', "juggler:step",
          'status', "running"),
         ('line', '1\n'),

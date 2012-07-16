@@ -1,13 +1,17 @@
-def make_id(memo, prefix, name, given=None):
-    """
-    utility to create ids,
-    """
-    if given is not None:
-        return given
-    current = memo.get(name, 0)
-    memo[name] = current + 1
-    suffix = '_%s' % current if current else ""
-    return '%s:%s%s' % (prefix, name, suffix)
+from .structure import Event
+
+
+def complete_event(doc, index, step, task):
+    if isinstance(doc, dict):
+        doc = Event(**doc)
+    if not doc._id:
+        doc._id = '%s:%s' % (step._id, index)
+    if not doc.step:
+        doc.step = step._id
+    if not doc.task:
+        doc.task = task._id
+    doc.index = index
+    return doc
 
 
 def text_prefix(text):

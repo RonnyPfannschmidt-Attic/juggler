@@ -1,19 +1,5 @@
-from functools import partial
+import pytest
 from juggler.model import utils
-
-
-def test_idmaker():
-    d = {}
-
-    m = partial(utils.make_id, d, 'test')
-    id = m('python')
-    assert id == 'test:python'
-    id = m('python')
-    assert id == 'test:python_1'
-    id = m('python', 'python')
-    assert id == 'python'
-
-    assert d == {'python': 2}
 
 
 def test_text_prefix():
@@ -24,3 +10,8 @@ def test_text_prefix():
 def test_keylist_prefix():
     a = utils.keylist_prefix('a')
     assert a == {'startkey': ('a',), 'endkey': ('a', {})}
+
+
+@pytest.mark.xfail(run=False, reason='test unimplemented')
+def test_eventcomplete():
+    pass
