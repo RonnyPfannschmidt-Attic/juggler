@@ -20,7 +20,12 @@ def work(service, args):
     pass
 
 
-def simple(service, args):
+def simple(service, args=None):
+    #XXX hack
+    #XXX: better basedir
+    import py
+    basedir = py.path.local(service.name).ensure(dir=1)
+    service.path = basedir
     while True:
         run_once(service)
 
@@ -32,11 +37,7 @@ def run_once(service):
     task = service.smart_watch(
         slave.wait_for_one_claiming_task,
         id=claiming._id, owner=service)
-    #XXX: better basedir
-    import py
-    basedir = py.path.local(service.name).ensure(dir=1)
-    from juggler.process.arbiter import Arbiter
-    arbiter = Arbiter(service.db, basedir)
     if task is not None:
-        #XXX rename owner arg
-        slave.run_one_claimed_task(service, task, owner=arbiter)
+        slave.run_one_claimed_task(service, task,
+                                   owner=service.name,
+                                   run=service.run_task)
