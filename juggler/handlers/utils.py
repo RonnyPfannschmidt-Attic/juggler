@@ -13,6 +13,7 @@ _CHANGES_EXTRA = {}
 
 
 def listen_some_changes(db, **kw):
+    db = couchdbkit.Database(db.uri)
     r = db.res.get(
         path="_changes",
         include_docs=True,
