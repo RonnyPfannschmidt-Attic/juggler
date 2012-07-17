@@ -52,6 +52,8 @@ class StoppableThread(threading.Thread):
 
 class ThreadAsyncModule(object):
     from Queue import Queue
+    Queue  # silence pyflakes
+
     def sleep(self, time):
         py.std.time.sleep(time)
         _magic_stop()
@@ -68,7 +70,7 @@ class ThreadAsyncModule(object):
     def _timeout(self, tostop, time):
         #XXX: incremental loop to make this joinable
         for i in range(100):
-            self.sleep(time/100.0)
+            self.sleep(time / 100.0)
             _magic_stop()
         tostop.kill(TimeoutError())
 
@@ -102,8 +104,10 @@ class ThreadAsyncModule(object):
                 else:
                     yield item
 
+
 class GeventAsyncModule(object):
     from gevent.queue import Queue
+    Queue  # silence pytest
     spawn = staticmethod(gevent.spawn)
     sleep = staticmethod(gevent.sleep)
     joinall = staticmethod(gevent.joinall)

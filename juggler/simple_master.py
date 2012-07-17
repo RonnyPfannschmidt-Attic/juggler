@@ -31,7 +31,7 @@ def run_master(db, name, callbacks):
         if call is not None:
             obj = call.type.wrap(doc)
             log.info('call {call.__name__} for {obj.type} {obj._id}',
-                      call=call, obj=obj)
+                     call=call, obj=obj)
             call.func(db, obj)  # protect against green exit
 
 

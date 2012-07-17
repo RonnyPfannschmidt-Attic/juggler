@@ -69,9 +69,6 @@ def watch_for(db, type, **kw):
             return type.wrap(doc), None  # XXX: conflicts
 
 
-
-
-
 def translate_variables(template, spec):
     #XXX: prelimitary
     if isinstance(template, dict):
@@ -80,12 +77,13 @@ def translate_variables(template, spec):
         else:
             result = {}
             for k, v in template.items():
-                result[k] = translate_variables(v)
+                result[k] = translate_variables(v, spec)
             return result
-    elif isinstance(items, list):
-        return [ translate_variables(i, spec) for i in items]
+    elif isinstance(template, list):
+        return [translate_variables(i, spec) for i in template]
     else:
-        return items
+        return template
+
 
 def steps_from_template(project, task):
     steps = copy.deepcopy(project.steps) or []
@@ -95,7 +93,7 @@ def steps_from_template(project, task):
         step['type'] = 'juggler:step'
         step['index'] = idx
         step['task'] = task._id
-        translate_variables(step, task.spec)
+        step.update(translate_variables(step, task.spec))
     return steps
 
 
