@@ -1,0 +1,8 @@
+pytest-couchdbkit
+pytest-xdist
+-e ../couchdb-compose
+pyyaml
+mock
+logbook
+reprtools
+pytest-codecheckers

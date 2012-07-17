@@ -4,6 +4,7 @@ import math
 from itertools import product
 from functools import wraps
 import couchdbkit
+from juggler.async import _BACKEND, _magic_stop
 
 import logbook
 log = logbook.Logger('utils', level='info')
@@ -13,7 +14,7 @@ _CHANGES_EXTRA = {}
 
 
 def listen_some_changes(db, **kw):
-    db = couchdbkit.Database(db.uri)
+    db = get_database(db.uri)
     r = db.res.get(
         path="_changes",
         include_docs=True,
@@ -29,17 +30,19 @@ def listen_some_changes(db, **kw):
 def listen_new_changes(db, **kw):
     since = kw.pop('since', 0)
     while True:
+        _magic_stop()
         result = listen_some_changes(db, since=since, **kw)
         since = result['last_seq']
         for item in result['results']:
+            _magic_stop()
             yield item
 
 
 def get_database(name_or_uri):
     if '/' in name_or_uri:
-        return couchdbkit.Database(name_or_uri, backend='gevent')
+        return couchdbkit.Database(name_or_uri, backend=_BACKEND)
     else:
-        return couchdbkit.Server(backend='gevent')[name_or_uri]
+        return couchdbkit.Server(backend=_BACKEND)[name_or_uri]
 
 
 def _compare(obj, kw):
