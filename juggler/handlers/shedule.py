@@ -1,16 +1,16 @@
+from logbook import Logger
+from juggler import async
 from ..model import Task, Project
 from .utils import watches_for, steps_from_template
 
-from logbook import Logger
-log = Logger('shedule')
-from juggler import async
+log = Logger('shedule', level='info')
 
 
 @watches_for(Task, 'new')
 def new_task_generate_steps(db, task):
-    print task.project, 'get'
+    log.debug('get project {}', task.project)
     project = db.get(task.project, schema=Project)
-    print project
+    log.debug('got {}', project)
     bulk = [task]
     if project.computed_steps:
         raise NotImplementedError
@@ -19,7 +19,7 @@ def new_task_generate_steps(db, task):
         bulk += steps_from_template(project, task)
         task.status = 'pending'
     with async.Timeout(1):
-        print 'save_bulk', bulk
+        log.debug('save_bulk, {}', bulk)
         db.bulk_save(bulk)
     log.info('generated steps for {task._id}', task=task)
 
