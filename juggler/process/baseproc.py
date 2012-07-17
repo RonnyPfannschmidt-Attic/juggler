@@ -4,6 +4,7 @@ from reprtools import FormatRepr
 from juggler import async
 from juggler.model import utils
 
+from juggler import async
 
 class Proc(object):
 
@@ -31,7 +32,8 @@ class Proc(object):
         self.queue.put(event or kw)
 
     def _store(self):
-        for i, doc in enumerate(self.queue):
+        iter = async.queue_iter(self.queue)
+        for i, doc in enumerate(iter):
             doc = utils.complete_event(doc, i, self.step, self.procdir.task)
 
             self.save_with_batch(doc)
@@ -52,7 +54,7 @@ class Proc(object):
     def wait(self):
         self.start()
         self._control.join()
-        gevent.joinall(self.greenlets, raise_error=True)
+        async.joinall(self.greenlets, raise_error=True)
         if not self._control.successful():
             raise self._control.exception
 

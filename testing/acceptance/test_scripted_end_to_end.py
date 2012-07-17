@@ -67,7 +67,7 @@ def test_spawned_parts_simple_worker(juggler, axis):
                     print item['key'], item['id']
                 if not items:
                     continue
-                if all(item['key'][1] == 'complete' for item in items):
+                if all(item['key'][1] == u'completed' for item in items):
                     break
     completion = async.spawn(wait_for_completion)
     completion.join(timeout=5)

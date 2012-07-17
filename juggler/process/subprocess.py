@@ -1,15 +1,13 @@
 from __future__ import absolute_import
 
 import os
-import fcntl
 import errno
 import sys
 
 import subprocess
-import gevent
-from gevent.socket import wait_read
 from .baseproc import Proc
 
+from juggler import async
 
 def python_template(script):
     return dict(
@@ -37,8 +35,11 @@ class SubProcessProc(Proc):
         self.popen = start_subprocess(self)
 
 
-def stream_line_iter(fp):
-    fcntl.fcntl(fp, fcntl.F_SETFL, os.O_NONBLOCK)  # make the file nonblocking
+def stream_line_iter_gevent(fp):
+    import fcntl
+    from gevent.socket import wait_read
+    # make the file nonblocking
+    fcntl.fcntl(fp, fcntl.F_SETFL, os.O_NONBLOCK)
     remainder = ''
     while True:
         try:
@@ -64,9 +65,15 @@ def stream_line_iter(fp):
             remainder  # XXX: pyflakes
         wait_read(fp.fileno())
 
+def stream_line_iter(fp):
+    if async._BACKEND == 'gevent':
+        return stream_line_iter_gevent(fp)
+    elif async._BACKEND == 'thread':
+        return iter(fp)
 
 def _stream_reader(proc, stream, queue):
     fp = getattr(proc, stream)
+
     for lineno, line in enumerate(stream_line_iter(fp)):
         queue.put({
             'stream': stream,
@@ -77,7 +84,7 @@ def _stream_reader(proc, stream, queue):
 
 def _exit_poller(proc, q):
     while True:
-        gevent.sleep(.1)
+        async.sleep(.1)
         code = proc.poll()
         if code is not None:
             q.put({'returncode': code})
@@ -85,7 +92,7 @@ def _exit_poller(proc, q):
 
 
 def _joinall(queue, *greenlets):
-    gevent.joinall(greenlets)
+    async.joinall(greenlets)
     queue.put(StopIteration)
 
 
@@ -100,10 +107,10 @@ def start_subprocess(proc):
         stderr=subprocess.PIPE,
     )
     q = proc.queue
-    out = gevent.spawn(_stream_reader, popen, 'stdout', q)
-    err = gevent.spawn(_stream_reader, popen, 'stderr', q)
-    ret = gevent.spawn(_exit_poller, popen, q)
-    gevent.spawn(_joinall, q, out, err, ret)
+    out = async.spawn(_stream_reader, popen, 'stdout', q)
+    err = async.spawn(_stream_reader, popen, 'stderr', q)
+    ret = async.spawn(_exit_poller, popen, q)
+    async.spawn(_joinall, q, out, err, ret)
 
     stdin = getattr(step, 'stdin', None)
     if stdin is not None:

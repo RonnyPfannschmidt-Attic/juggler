@@ -31,6 +31,10 @@ class ThreadExit(BaseException):
 
 class StoppableThread(threading.Thread):
     stopped = False
+    exception = None
+
+    def successful(self):
+        return self.exception is None
 
     def kill(self, exc=ThreadExit()):
         self.stopped = exc
@@ -41,6 +45,9 @@ class StoppableThread(threading.Thread):
             threading.Thread.run(self)
         except ThreadExit:
             pass
+        except Exception as e:
+            self.exception = e
+            raise
 
 
 class ThreadAsyncModule(object):
@@ -83,6 +90,17 @@ class ThreadAsyncModule(object):
         for t in threads:
             t.join(timeout=1)
 
+    def queue_iter(self, queue):
+        while True:
+            try:
+                item = queue.get(timeout=0.5)
+            except queue.Empty:
+                self._magic_stop()
+            else:
+                if item is StopIteration:
+                    break
+                else:
+                    yield item
 
 class GeventAsyncModule(object):
     from gevent.queue import Queue
@@ -90,6 +108,7 @@ class GeventAsyncModule(object):
     sleep = staticmethod(gevent.sleep)
     joinall = staticmethod(gevent.joinall)
     Timeout = gevent.Timeout
+    queue_iter = staticmethod(iter)
 
 
 lookup = {
@@ -104,3 +123,4 @@ sleep = current.sleep
 joinall = current.joinall
 Timeout = current.Timeout
 Queue = current.Queue
+queue_iter = current.queue_iter
