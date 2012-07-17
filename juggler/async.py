@@ -44,6 +44,7 @@ class StoppableThread(threading.Thread):
 
 
 class ThreadAsyncModule(object):
+    from Queue import Queue
     def sleep(self, time):
         py.std.time.sleep(time)
         _magic_stop()
@@ -84,6 +85,7 @@ class ThreadAsyncModule(object):
 
 
 class GeventAsyncModule(object):
+    from gevent.queue import Queue
     spawn = staticmethod(gevent.spawn)
     sleep = staticmethod(gevent.sleep)
     joinall = staticmethod(gevent.joinall)
@@ -101,3 +103,4 @@ spawn = current.spawn
 sleep = current.sleep
 joinall = current.joinall
 Timeout = current.Timeout
+Queue = current.Queue
