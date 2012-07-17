@@ -2,7 +2,7 @@ import py
 import pytest
 
 import socket
-import gevent
+from juggler import async
 
 from juggler.model import Step
 
@@ -36,7 +36,7 @@ def test_simple_clone(procdir, path):
     )
 
     procdir.run(step)
-    gevent.sleep(0)
+    async.sleep(0)
     assert procdir.path.check()
     step_repeat = Step(
         _id='clone_2',

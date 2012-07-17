@@ -3,8 +3,8 @@ from .utils import watches_for, steps_from_template
 
 from logbook import Logger
 log = Logger('shedule')
-import gevent
-gevent
+from juggler import async
+
 
 @watches_for(Task, 'new')
 def new_task_generate_steps(db, task):
@@ -18,7 +18,7 @@ def new_task_generate_steps(db, task):
     else:
         bulk += steps_from_template(project, task)
         task.status = 'pending'
-    with gevent.Timeout(1):
+    with async.Timeout(1):
         print 'save_bulk', bulk
         db.bulk_save(bulk)
     log.info('generated steps for {task._id}', task=task)

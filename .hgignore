@@ -4,3 +4,4 @@ composeapp/.couchdb-compose-external-cache
 \.cache
 .*\.egg-info
 \.tox
+venv/
