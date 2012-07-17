@@ -34,10 +34,12 @@ def test_scripted_end_to_end(juggler, tmpdir):
 @pytest.mark.changes_extra(timeout=3000)
 @pytest.mark.parametrize('axis', [
     {},
-    {'test': [1, 2, 3, 4, 5, 6]}
-], ids=['small', 'medium'])
-def test_spawned_parts_simple_worker(juggler, axis):
-    slave = async.spawn(simple_slave.simple, juggler)
+    {'test': [1, 2, 3, 4, 5, 6]},
+    {'test': [1, 2, 3, 4, 5, 6], 'test2':[1, 2, 3, 4, 5, 6]},
+], ids=['small', 'medium', 'large'])
+def test_spawned_parts_2_simple_worker(juggler, axis):
+    slave1 = async.spawn(simple_slave.simple, juggler)
+    slave2 = async.spawn(simple_slave.simple, juggler)
     master = async.spawn(simple_master.simple_master, juggler)
 
     project = Project(_id='project', steps=[
@@ -53,8 +55,8 @@ def test_spawned_parts_simple_worker(juggler, axis):
     juggler.save_doc(order)
     async.sleep(0.1)
 
-    def wait_for_completion():
-        with async.Timeout(10):
+    def wait_for_completion(juggler, timeout=10):
+        with async.Timeout(timeout):
             while True:
                 async.sleep(0.5)
                 items = juggler.db.view(
@@ -69,12 +71,13 @@ def test_spawned_parts_simple_worker(juggler, axis):
                     continue
                 if all(item['key'][1] == u'completed' for item in items):
                     break
-    completion = async.spawn(wait_for_completion)
+    completion = async.spawn(wait_for_completion, juggler)
     completion.join(timeout=5)
     completion.kill()
     #XXX: check all tasks for completion status
     #ask = juggler.get(step.task, schema=Task)
     #assert task.project == project._id
-    slave.kill()
+    slave1.kill()
+    slave2.kill()
     master.kill()
-    async.joinall([master, slave, completion], raise_error=True)
+    async.joinall([master, slave1, slave2, completion], raise_error=True)
