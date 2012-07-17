@@ -9,6 +9,7 @@ from .baseproc import Proc
 
 from juggler import async
 
+
 def python_template(script):
     return dict(
         variant='python',
@@ -65,11 +66,13 @@ def stream_line_iter_gevent(fp):
             remainder  # XXX: pyflakes
         wait_read(fp.fileno())
 
+
 def stream_line_iter(fp):
     if async._BACKEND == 'gevent':
         return stream_line_iter_gevent(fp)
     elif async._BACKEND == 'thread':
         return iter(fp)
+
 
 def _stream_reader(proc, stream, queue):
     fp = getattr(proc, stream)

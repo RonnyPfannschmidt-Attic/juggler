@@ -51,8 +51,8 @@ class StoppableThread(threading.Thread):
 
 
 class ThreadAsyncModule(object):
-    from Queue import Queue
-    Queue  # silence pyflakes
+    from Queue import Queue, Empty
+    Queue, Empty  # silence pyflakes
 
     def sleep(self, time):
         py.std.time.sleep(time)
@@ -87,17 +87,18 @@ class ThreadAsyncModule(object):
             # so late fireing doesnt confuse code after us
             _magic_stop()
 
-    def joinall(self, threads, **kw):
-        print kw
+    def joinall(self, threads, raise_error=False):
         for t in threads:
             t.join(timeout=1)
+            if raise_error and t.exception:
+                raise t.exception
 
     def queue_iter(self, queue):
         while True:
             try:
                 item = queue.get(timeout=0.5)
-            except queue.Empty:
-                self._magic_stop()
+            except self.Empty:
+                _magic_stop()
             else:
                 if item is StopIteration:
                     break
