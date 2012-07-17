@@ -1,10 +1,7 @@
 from datetime import datetime
 
 from reprtools import FormatRepr
-
-import gevent
-from gevent.queue import Queue
-
+from juggler import async
 from juggler.model import utils
 
 
@@ -20,13 +17,13 @@ class Proc(object):
 
     def __init__(self, procdir, step):
         self.procdir = procdir
-        self.queue = Queue()
+        self.queue = async.Queue()
         self.greenlets = []
         self._control = None
         self.step = step
 
     def spawn(self, func, *k, **kw):
-        res = gevent.spawn(func, *k, **kw)
+        res = async.spawn(func, *k, **kw)
         self.greenlets.append(res)
         return res
 
