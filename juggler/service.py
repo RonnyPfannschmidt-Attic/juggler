@@ -53,8 +53,9 @@ class Juggler(object):
         log.debug('building {}', task._id)
         self.save_doc(task)
         for step in steps:
-            log.debug('run {task._id} step {step.index}',
-                     task=task, step=step)
+            log.debug(
+                'run {task._id} step {step.index}',
+                task=task, step=step)
             procdir.run(step)
         task.status = 'completed'
         log.info('completed {}', task._id)

@@ -4,8 +4,9 @@ from juggler.handlers.utils import translate_variables
 specs = [
     # id, items, spec, result
     ('nothing', {}, {}, {}),
-    ('some', {}, {'a': 1}, {}),
+    ('some', {'b': 1}, {'a': 1}, {'b': 1}),
     ('flat', {'__var__': 'a'}, {'a': 1}, 1),
+    ('list', [1, 2, 3, {'__var__': 'a'}], {'a': 1}, [1 ,2, 3, 1]),
 ]
 
 

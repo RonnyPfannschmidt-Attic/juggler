@@ -1,10 +1,8 @@
 from datetime import datetime
-
 from reprtools import FormatRepr
 from juggler import async
 from juggler.model import utils
 
-from juggler import async
 
 class Proc(object):
 
