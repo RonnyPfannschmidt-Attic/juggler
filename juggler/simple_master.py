@@ -1,7 +1,7 @@
 from logbook import Logger
 from juggler.handlers import inbox, shedule, utils
 
-log = Logger('Master')
+log = Logger('Master')  # , level='info')
 
 
 callbacks_workers = [
@@ -26,11 +26,11 @@ def run_master(db, name, callbacks):
     for change in new_changes:
         doc = change['doc']
         lookup = str(doc['type']), str(doc['status'])
-        print lookup, change['id']
+        log.debug('event {} for {}', lookup, change['id'])
         call = callbacks.get(lookup)
         if call is not None:
             obj = call.type.wrap(doc)
-            log.debug('call {call.__name__} for {obj.type} {obj._id}',
+            log.info('call {call.__name__} for {obj.type} {obj._id}',
                       call=call, obj=obj)
             call.func(db, obj)  # protect against green exit
 

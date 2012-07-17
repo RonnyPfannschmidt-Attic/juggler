@@ -2,7 +2,7 @@ from .handlers.utils import watch_for
 import time
 import logbook
 
-log = logbook.Logger('juggler')
+log = logbook.Logger('juggler', level='info')
 
 
 class Juggler(object):
@@ -50,12 +50,12 @@ class Juggler(object):
         steps = procdir.find_steps()
         assert steps
         task.status = 'building'
-        log.debug('saving building {}', task._id)
+        log.debug('building {}', task._id)
         self.save_doc(task)
         for step in steps:
-            log.info('run {task._id} step {step.index}',
+            log.debug('run {task._id} step {step.index}',
                      task=task, step=step)
             procdir.run(step)
         task.status = 'completed'
-        log.debug('saving completed {}', task._id)
+        log.info('completed {}', task._id)
         self.save_doc(task)

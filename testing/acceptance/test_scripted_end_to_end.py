@@ -1,5 +1,7 @@
+import py
 import pytest
 from juggler import async
+from juggler.service import Juggler
 from juggler.handlers import inbox, shedule, slave
 from juggler.model import Project, Order
 from juggler.process.subprocess import python_template
@@ -37,10 +39,15 @@ def test_scripted_end_to_end(juggler, tmpdir):
     {'test': [1, 2, 3, 4, 5, 6]},
     {'test': [1, 2, 3, 4, 5, 6], 'test2':[1, 2, 3, 4, 5, 6]},
 ], ids=['small', 'medium', 'large'])
-def test_spawned_parts_2_simple_worker(juggler, axis):
-    slave1 = async.spawn(simple_slave.simple, juggler)
-    slave2 = async.spawn(simple_slave.simple, juggler)
+def test_spawned_parts_2_simple_worker(juggler, axis, tmpdir):
+    slave1_juggler = Juggler(juggler.db, 'slave1', tmpdir.join('slave1'))
+    slave2_juggler = Juggler(juggler.db, 'slave2', tmpdir.join('slave2'))
+    slave1 = async.spawn(simple_slave.simple, slave1_juggler)
+    slave2 = async.spawn(simple_slave.simple, slave2_juggler)
+    slave1._Thread__name = 'slave 1'
+    slave2._Thread__name = 'slave 2'
     master = async.spawn(simple_master.simple_master, juggler)
+    master._Thread__name = 'master'
 
     project = Project(_id='project', steps=[
         python_template('print "hi"'),
@@ -64,15 +71,17 @@ def test_spawned_parts_2_simple_worker(juggler, axis):
                     startkey=['juggler:task'],
                     endkey=['juggler:task', {}],
                 ).all()
-                print '-' * 10
-                for item in items:
-                    print item['key'], item['id']
                 if not items:
                     continue
-                if all(item['key'][1] == u'completed' for item in items):
+                counter = py.std.collections.Counter(
+                    ' '.join(item['key']) for item in items
+                )
+                py.std.pprint.pprint(counter)
+                if counter[u'juggler:task completed'] == len(items):
                     break
-    completion = async.spawn(wait_for_completion, juggler)
-    completion.join(timeout=5)
+    completion = async.spawn(wait_for_completion, juggler, 60)
+    completion._Thread__name = 'completion'
+    completion.join()  # 2 min
     completion.kill()
     #XXX: check all tasks for completion status
     #ask = juggler.get(step.task, schema=Task)
