@@ -3,10 +3,7 @@ import threading
 import py
 import gevent
 
-root = py.path.local(__file__).dirpath().dirpath()
-config = py.iniconfig.IniConfig(root.join('tox.ini'))
-
-_BACKEND = config['pytest']['couchdbkit_backend']
+_BACKEND = py.std.os.environ.get("COUCHDBKIT_BACKEND", 'thread')
 
 
 class StopInfo(threading.local):
@@ -52,6 +49,7 @@ class SimpleModule(object):
 
 
 class ThreadAsyncModule(SimpleModule):
+    sleep = staticmethod(py.std.time.sleep)
 
     def spawn(self, func, *args, **kwargs):
         thread = StoppableThread(
@@ -62,8 +60,6 @@ class ThreadAsyncModule(SimpleModule):
         thread.start()
         return thread
 
-    def sleep(self, time):
-        py.std.time.sleep(time)
 
     def _timeout(self, tostop, time):
         #XXX: incremental loop to make this joinable
@@ -91,12 +87,11 @@ class ThreadAsyncModule(SimpleModule):
 
 
 class GeventAsyncModule(SimpleModule):
+    spawn = staticmethod(gevent.spawn)
+    sleep = staticmethod(gevent.sleep)
+    joinall = staticmethod(gevent.joinall)
+    Timeout = gevent.Timeout
 
-    def spawn(self, *k, **kw):
-        return gevent.spawn(*k, **kw)
-
-    def sleep(self, time):
-        gevent.sleep(time)
 
 
 lookup = {
