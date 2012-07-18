@@ -27,7 +27,8 @@ def ready_order_generate_tasks(db, order):
     oid = order._id
     for idx, spec in enumerate(generate_specs(order.axis)):
         job = Task(
-            _id='%s.task%s' % (oid, idx),
+            #XXX: compute optimal length
+            _id='%s.task%4d' % (oid, idx),
             # currently unused magic constant
             arbiter='glas_process',
             order=oid,
