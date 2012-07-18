@@ -18,8 +18,13 @@ class Juggler(object):
         return watch_for(self.db, type, **kw)
 
     def all_current_docs_for(self, doc):
-        #XXX: implement
-        return []
+        schema = type(doc)
+        items = self.db.get(doc._id,open_revs='all')
+        docs = [item[u'ok'] for item in items if u'ok' in item]
+        log.debug('versions {}', docs)
+        if not isinstance(doc, dict):
+            docs = [schema.wrap(item) for item in docs]
+        return docs
 
     def save_doc(self, doc):
         self.db.save_doc(doc)

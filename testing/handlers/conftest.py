@@ -37,9 +37,6 @@ class FakedDatabase(service.Juggler):
             return utils.watch_for(self.real_db, type, **kw)
         raise RuntimeError('no real db and not overridden')
 
-    def all_current_docs_for(self, item):
-        #XXX: real implementation
-        return []
 
     def save_doc(self, doc):
         #XXX: hack
