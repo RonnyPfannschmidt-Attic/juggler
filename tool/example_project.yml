@@ -1,0 +1,15 @@
+_id: evolve-results
+steps:
+- stepper: subprocess
+  args:
+  - /home/ronny/Projects/pypy/pypy-bin/bin/pypy
+  - /home/ronny/Projects/evolvestuff/fun/funfind.py
+  - "--generations"
+  - __var__: generations
+  - "--population"
+  - __var__: population
+  - "--height-weight"
+  - __var__: "height-weight"
+  - stack
+  env:
+    PYTHONPATH: /home/ronny/Projects/evolvestuff/pyevolve/
