@@ -16,6 +16,7 @@ def python_template(script):
         steper='popen',
         args=['python', '-'],
         stdin=script,
+        env={},
     )
 
 
@@ -25,6 +26,7 @@ def subprocess_template(cmd):
         steper='popen',
         args=[str(x) for x in cmd],
         stdin=None,
+        env={},
     )
 
 
@@ -105,6 +107,7 @@ def start_subprocess(proc):
     popen = subprocess.Popen(
         step.args,
         cwd=str(proc.procdir.path),
+        env=step.env or {},
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
