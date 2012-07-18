@@ -1,7 +1,6 @@
 import contextlib
 import threading
 import py
-import gevent
 
 _BACKEND = py.std.os.environ.get("COUCHDBKIT_BACKEND", 'thread')
 
@@ -106,15 +105,19 @@ class ThreadAsyncModule(object):
                     yield item
 
 
-class GeventAsyncModule(object):
-    from gevent.queue import Queue
-    Queue  # silence pytest
-    spawn = staticmethod(gevent.spawn)
-    sleep = staticmethod(gevent.sleep)
-    joinall = staticmethod(gevent.joinall)
-    Timeout = gevent.Timeout
-    queue_iter = staticmethod(iter)
-
+try:
+    import gevent
+except ImportError:
+    GeventAsyncModule = None
+else:
+    class GeventAsyncModule(object):
+        from gevent.queue import Queue
+        Queue  # silence pytest
+        spawn = staticmethod(gevent.spawn)
+        sleep = staticmethod(gevent.sleep)
+        joinall = staticmethod(gevent.joinall)
+        Timeout = gevent.Timeout
+        queue_iter = staticmethod(iter)
 
 lookup = {
     'thread': ThreadAsyncModule,
