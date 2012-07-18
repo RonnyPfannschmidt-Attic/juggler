@@ -1,4 +1,4 @@
-restcli http://localhost:5984/juggler DELETE
+restcli http://localhost:5984/juggler -X DELETE
 couchdb-compose push juggler --path composeapp
 echo put project
 python tool/put.py juggler tool/example_project.yml
