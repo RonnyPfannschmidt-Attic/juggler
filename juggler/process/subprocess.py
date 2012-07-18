@@ -105,7 +105,8 @@ def start_subprocess(proc):
     step = proc.step
     proc.procdir.path.ensure(dir=1)
     popen = subprocess.Popen(
-        step.args,
+        #XXX: unittest for that
+        [str(x) for x in step.args],
         cwd=str(proc.procdir.path),
         env=step.env or {},
         stdin=subprocess.PIPE,

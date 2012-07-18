@@ -1,7 +1,7 @@
 _id: evolve-results
 type: juggler:project
 steps:
-- stepper: subprocess
+- steper: popen
   args:
   - /home/ronny/Projects/pypy/pypy-bin/bin/pypy
   - /home/ronny/Projects/evolvestuff/fun/funfind.py
