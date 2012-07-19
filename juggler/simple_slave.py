@@ -33,7 +33,6 @@ def simple(service, args=None):
 def run_once(service):
     claiming = slave.claim_pending_task(service, owner=service)
     if claiming is None:
-        slave.log.warning('claiming is unexpectedly none')
         return
     task = slave.wait_for_one_claiming_task(service,
                                             id=claiming._id,
