@@ -16,9 +16,6 @@ externals:
   url: http://underscorejs.org/underscore.js
 - name: underscore
   url: http://underscorejs.org/underscore.js
-  path: [views, lib, underscore]
-- name: underscore
-  url: http://underscorejs.org/underscore.js
   attachment: js/vendor/underscore.js
 - name: backbone
   url: http://backbonejs.org/backbone.js
