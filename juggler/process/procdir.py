@@ -20,7 +20,7 @@ class ProcDir(object):
         self.lookup = default_lookup()
 
     def save_with_batch(self, doc):
-        return self.db.save_doc(doc, batch='ok')
+        return self.db.save_doc(doc) #, batch='ok')
 
     def find_steps(self):
         return self.db.view('juggler/steps_of',
