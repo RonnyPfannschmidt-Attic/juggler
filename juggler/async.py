@@ -1,8 +1,9 @@
+import time
 import contextlib
 import threading
-import py
+import os
 
-_BACKEND = py.std.os.environ.get("COUCHDBKIT_BACKEND", 'thread')
+_BACKEND = os.environ.get("COUCHDBKIT_BACKEND", 'thread')
 
 
 class StopInfo(threading.local):
@@ -53,8 +54,8 @@ class ThreadAsyncModule(object):
     from Queue import Queue, Empty
     Queue, Empty  # silence pyflakes
 
-    def sleep(self, time):
-        py.std.time.sleep(time)
+    def sleep(self, seconds):
+        time.sleep(seconds)
         _magic_stop()
 
     def spawn(self, func, *args, **kwargs):
@@ -87,10 +88,11 @@ class ThreadAsyncModule(object):
             _magic_stop()
 
     def joinall(self, threads, raise_error=False):
-        for t in threads:
-            t.join(timeout=1)
-            if raise_error and t.exception:
-                raise t.exception
+        #XXX: timeout
+        for thread in threads:
+            thread.join()
+            if raise_error and thread.exception:
+                    raise thread.exception
 
     def queue_iter(self, queue):
         while True:
