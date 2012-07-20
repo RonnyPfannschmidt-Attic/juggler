@@ -56,7 +56,8 @@ class Proc(object):
     def start(self):
         if self._control is None:
             self.create()
-            self._control = self.spawn(self._store)
+            # dont manage control, we join it after joining the workers
+            self._control = async.spawn(self._store)
 
     def wait(self):
         self.start()
