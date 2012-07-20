@@ -2,7 +2,7 @@ project: "evolve-results"
 type: juggler:order
 status: received
 axis:
-  generations: [50, 100, 500]
-  population: [50, 100, 500]
-  "height-weight": [0, 0.1, 1]
+  generations: [50, 100]
+  population: [50, 100 ]
+  "height-weight": [0]
 
