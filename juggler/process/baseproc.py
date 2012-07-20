@@ -1,7 +1,11 @@
+import time
 from datetime import datetime
 from reprtools import FormatRepr
+import logbook
 from juggler import async
 from juggler.model import utils
+
+log = logbook.Logger('Proc')
 
 
 class Proc(object):
@@ -27,11 +31,14 @@ class Proc(object):
         return res
 
     def emit(self, event=None, **kw):
+        log.debug('event emit {}', event or kw)
         self.queue.put(event or kw)
+        time.sleep(0)
 
     def _store(self):
         iter = async.queue_iter(self.queue)
         for i, doc in enumerate(iter):
+            log.debug('event store {}', doc)
             doc = utils.complete_event(doc, i, self.step, self.procdir.task)
 
             self.save_with_batch(doc)
@@ -51,8 +58,10 @@ class Proc(object):
 
     def wait(self):
         self.start()
-        self._control.join()
         async.joinall(self.greenlets, raise_error=True)
+        self.emit(StopIteration)
+        self._control.join(timeout=5)
+        #XXX: bad
         if not self._control.successful():
             raise self._control.exception
 
