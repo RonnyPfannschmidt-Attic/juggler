@@ -76,29 +76,24 @@ def stream_line_iter(fp):
         return iter(fp)
 
 
-def _stream_reader(proc, stream, queue):
+def _stream_reader(proc, stream, emit):
     fp = getattr(proc, stream)
 
     for lineno, line in enumerate(stream_line_iter(fp)):
-        queue.put({
-            'stream': stream,
-            'lineno': lineno,
-            'line': line,
-        })
+        emit(
+            stream=stream,
+            lineno=lineno,
+            line=line,
+        )
 
 
-def _exit_poller(proc, q):
+def _exit_poller(proc, emit):
     while True:
         async.sleep(.1)
         code = proc.poll()
         if code is not None:
-            q.put({'returncode': code})
+            emit(returncode=code)
             return
-
-
-def _joinall(queue, *greenlets):
-    async.joinall(greenlets)
-    queue.put(StopIteration)
 
 
 def start_subprocess(proc):
@@ -113,11 +108,9 @@ def start_subprocess(proc):
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
     )
-    q = proc.queue
-    out = async.spawn(_stream_reader, popen, 'stdout', q)
-    err = async.spawn(_stream_reader, popen, 'stderr', q)
-    ret = async.spawn(_exit_poller, popen, q)
-    async.spawn(_joinall, q, out, err, ret)
+    proc.spawn(_stream_reader, popen, 'stdout', proc.emit)
+    proc.spawn(_stream_reader, popen, 'stderr', proc.emit)
+    proc.spawn(_exit_poller, popen, proc.emit)
 
     stdin = getattr(step, 'stdin', None)
     if stdin is not None:
