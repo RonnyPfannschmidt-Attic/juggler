@@ -1,5 +1,4 @@
 from logbook import Logger
-from juggler import async
 from ..model import Task, Project
 from .utils import watches_for, steps_from_template
 
@@ -18,9 +17,8 @@ def new_task_generate_steps(db, task):
     else:
         bulk += steps_from_template(project, task)
         task.status = 'pending'
-    with async.Timeout(1):
-        log.debug('save_bulk, {}', bulk)
-        db.bulk_save(bulk)
+    log.debug('save_bulk, {}', bulk)
+    db.bulk_save(bulk)
     log.info('generated steps for {task._id}', task=task)
 
 
