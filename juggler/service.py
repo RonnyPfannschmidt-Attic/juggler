@@ -19,7 +19,7 @@ class Juggler(object):
 
     def all_current_docs_for(self, doc):
         schema = type(doc)
-        items = self.db.get(doc._id,open_revs='all')
+        items = self.db.get(doc._id, open_revs='all')
         docs = [item[u'ok'] for item in items if u'ok' in item]
         log.debug('versions {}', docs)
         if not isinstance(doc, dict):
