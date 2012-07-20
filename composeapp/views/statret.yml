@@ -1,0 +1,25 @@
+map.coffee: |
+  (doc) ->
+    if doc.type == 'juggler:task'
+      emit [doc._id], {
+        owner: [doc.owner]
+        status: [doc.status]
+      }
+    if doc.returncode?
+      emit [doc.task], {returncode: [doc.returncode]}
+    return
+reduce.coffee: |
+  (keys, values, rereduce) ->
+    log values
+    result = values.pop()
+    for item in values
+      for name, take of item
+        if name of result
+          put = result[name]
+          for item in take
+            if item not in put
+              put.push(item)
+        else
+          result[name] = take
+    return result
+
