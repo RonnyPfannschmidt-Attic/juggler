@@ -31,20 +31,22 @@ class Proc(object):
         return res
 
     def emit(self, event=None, **kw):
-        log.debug('event emit {}', event or kw)
+        log.debug('event emit {} {}',self.step._id, event or kw)
         self.queue.put(event or kw)
         time.sleep(0)
 
     def _store(self):
+        log.debug('store thread start {}', self.step._id)
         iter = async.queue_iter(self.queue)
         for i, doc in enumerate(iter):
-            log.debug('event store {}', doc)
+            log.debug('event store {} {}',self.step._id, doc)
             doc = utils.complete_event(doc, i, self.step, self.procdir.task)
 
             self.save_with_batch(doc)
             returncode = getattr(doc, 'returncode', None)
             if returncode is not None and self.step is not None:
                 self.finish_step('complete' if returncode == 0 else 'failed')
+        log.debug('store thread stop {}', self.step._id)
 
     def finish_step(self, newstate):
         self.step.status = newstate
