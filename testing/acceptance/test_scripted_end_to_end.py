@@ -62,26 +62,25 @@ def test_spawned_parts_2_simple_worker(juggler, axis, tmpdir):
     juggler.save_doc(order)
     async.sleep(0.1)
 
-    def wait_for_completion(juggler, timeout=10):
-        with async.Timeout(timeout):
-            while True:
-                async.sleep(0.5)
-                items = juggler.db.view(
-                    'juggler/stm',
-                    startkey=['juggler:task'],
-                    endkey=['juggler:task', {}],
-                ).all()
-                if not items:
-                    continue
-                counter = py.std.collections.Counter(
-                    ' '.join(item['key']) for item in items
-                )
-                py.std.pprint.pprint(counter)
-                if counter[u'juggler:task completed'] == len(items):
-                    break
-    completion = async.spawn(wait_for_completion, juggler, 60)
+    def wait_for_completion(juggler):
+        while True:
+            async.sleep(0.5)
+            items = juggler.db.view(
+                'juggler/stm',
+                startkey=['juggler:task'],
+                endkey=['juggler:task', {}],
+            ).all()
+            if not items:
+                continue
+            counter = py.std.collections.Counter(
+                ' '.join(item['key']) for item in items
+            )
+            py.std.pprint.pprint(counter)
+            if counter[u'juggler:task completed'] == len(items):
+                break
+    completion = async.spawn(wait_for_completion, juggler)
     completion._Thread__name = 'completion'
-    completion.join()  # 2 min
+    completion.join(timeout=60)  # 2 min
     completion.kill()
     #XXX: check all tasks for completion status
     #ask = juggler.get(step.task, schema=Task)
