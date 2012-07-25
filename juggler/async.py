@@ -67,26 +67,6 @@ class ThreadAsyncModule(object):
         thread.start()
         return thread
 
-    def _timeout(self, tostop, time):
-        #XXX: incremental loop to make this joinable
-        for i in range(100):
-            self.sleep(time / 100.0)
-            _magic_stop()
-        tostop.kill(TimeoutError())
-
-    @contextlib.contextmanager
-    def Timeout(self, time):
-        timer = self.spawn(
-            self._timeout,
-            stop_info.current,
-            time)
-        try:
-            yield
-        finally:
-            timer.kill()
-            # so late fireing doesnt confuse code after us
-            _magic_stop()
-
     def joinall(self, threads, raise_error=False):
         #XXX: timeout
         for thread in threads:
@@ -118,7 +98,6 @@ else:
         spawn = staticmethod(gevent.spawn)
         sleep = staticmethod(gevent.sleep)
         joinall = staticmethod(gevent.joinall)
-        Timeout = gevent.Timeout
         queue_iter = staticmethod(iter)
 
 lookup = {
@@ -131,6 +110,5 @@ current = lookup[_BACKEND]()
 spawn = current.spawn
 sleep = current.sleep
 joinall = current.joinall
-Timeout = current.Timeout
 Queue = current.Queue
 queue_iter = current.queue_iter
