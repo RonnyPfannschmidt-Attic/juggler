@@ -5,17 +5,17 @@ about: |
 map.coffee: |
   (doc) ->
     if doc.doc_type == "juggler:task"
-      emit [doc._id], null;
+      emit [doc._id], [];
     if doc.stream
-      emit [doc.task, doc.step], doc.stream
+      emit [doc.task, doc.step], [doc.stream]
     return
 
 reduce.coffee: |
-  (key, values, rereduce) ->
-    if rereduce
-      values = values.reduce Array.concat
+  (key, values) ->
+    # due to map returning lists we ignore rereduce
+    # and always do the same
+    values = Array.concat.apply(values)
     uniq = {}
-    for item in values
-      uniq[item] = true
-    key for key of uniq
+    values.forEach (item) -> uniq[item] = true
+    Object.keys(uniq)
 
