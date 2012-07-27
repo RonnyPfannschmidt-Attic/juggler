@@ -3,3 +3,5 @@ map.coffee: |
     if doc.status
       emit [doc.type, doc.status], null
     return
+
+reduce: _count
