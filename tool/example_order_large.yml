@@ -1,0 +1,8 @@
+project: "evolve-results"
+type: juggler:order
+status: received
+axis:
+  generations: [20, 50, 100, 300, 500, 1000, 1500, 2000, 3000, 5000]
+  population:  [20, 50, 100, 300, 500, 1000, 1500, 2000, 3000, 5000]
+  "height-weight": [-2, -1, -0.1, -0.01, -0.001, 0, 0.001, 0.01, 0.1, 1, 2]
+
