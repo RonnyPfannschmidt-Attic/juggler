@@ -69,6 +69,7 @@ def test_spawned_parts_2_simple_worker(juggler, axis, tmpdir):
                 'juggler/stm',
                 startkey=['juggler:task'],
                 endkey=['juggler:task', {}],
+                reduce=False,
             ).all()
             if not items:
                 continue
@@ -80,8 +81,10 @@ def test_spawned_parts_2_simple_worker(juggler, axis, tmpdir):
                 break
     completion = async.spawn(wait_for_completion, juggler)
     completion._Thread__name = 'completion'
-    completion.join(timeout=60)  # 2 min
-    completion.kill()
+    try:
+        completion.join(timeout=60)  # 2 min
+    finally:
+        completion.kill()
     #XXX: check all tasks for completion status
     #ask = juggler.get(step.task, schema=Task)
     #assert task.project == project._id
