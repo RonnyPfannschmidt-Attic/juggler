@@ -3,12 +3,6 @@ from juggler import service
 from juggler.handlers import utils
 
 
-def pytest_generate_tests(metafunc):
-    if 'db' in metafunc.funcargnames:
-        l = ['direct', 'mocked']
-        metafunc.parametrize('db', l, ids=l, indirect=True)
-
-
 def faked_watch_for(result, info=None):
     def faked_watch_for(type, **kw):
         assert isinstance(result, type)
@@ -46,8 +40,5 @@ class FakedDatabase(service.Juggler):
 
 
 def pytest_funcarg__db(request):
-    if request.param == 'direct':
-        db = request.getfuncargvalue('couchdb')
-    else:
-        db = None
+    db = request.getfuncargvalue('couchdb')
     return FakedDatabase(db)
