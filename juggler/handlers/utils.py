@@ -107,6 +107,33 @@ def generate_specs(axis):
         yield dict(zip(names, values))
 
 
+def gather_next(db, type, status, **watch_kw):
+    since = 0
+
+    params = dict(
+        key=[type._doc_type, status],
+        include_docs=True,
+        update_seq=True,
+        reduce=False)
+    if not watch_kw:
+        params.update(limit=1)
+
+    results = db.db.raw_view('/_design/juggler/_view/stm', params)
+    results = results.json_body
+    rows = results.pop('rows')
+    if rows:
+        if watch_kw:
+            for row in rows:
+                if _compare(row['doc'], watch_kw):
+                    return type.wrap(row['doc']), results
+            assert 0
+        else:
+            return type.wrap(rows[0]['doc']), results
+    since = results['last_seq']
+
+    return db.watch_for(type, status=status, since=since, **watch_kw)
+
+
 def watches_for(type, status, **wkw):
     def decorator(func):
         @wraps(func)
@@ -119,7 +146,7 @@ def watches_for(type, status, **wkw):
                 for key, val in wkw.items():
                     watch_kw[key] = val(kw)
 
-                item, _ = db.watch_for(type, status=status, **watch_kw)
+                item, _ = gather_next(db, type, status=status, **watch_kw)
             return func(db, item, **kw)
         watching_version.type = type
         watching_version.status = status
