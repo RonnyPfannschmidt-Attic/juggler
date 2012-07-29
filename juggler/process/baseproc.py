@@ -31,7 +31,7 @@ class Proc(object):
         return res
 
     def emit(self, event=None, **kw):
-        log.debug('event emit {} {}',self.step._id, event or kw)
+        log.debug('event emit {} {}', self.step._id, event or kw)
         self.queue.put(event or kw)
         time.sleep(0)
 
@@ -39,7 +39,7 @@ class Proc(object):
         log.debug('store thread start {}', self.step._id)
         iter = async.queue_iter(self.queue)
         for i, doc in enumerate(iter):
-            log.debug('event store {} {}',self.step._id, doc)
+            log.debug('event store {} {}', self.step._id, doc)
             doc = utils.complete_event(doc, i, self.step, self.procdir.task)
 
             self.save_with_batch(doc)
