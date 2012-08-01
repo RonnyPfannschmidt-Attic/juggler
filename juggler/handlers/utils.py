@@ -129,7 +129,8 @@ def gather_next(db, type, status, **watch_kw):
             assert 0
         else:
             return type.wrap(rows[0]['doc']), results
-    since = results['last_seq']
+    log.debug("gather next stm info {}", results)
+    since = results['update_seq']
 
     return db.watch_for(type, status=status, since=since, **watch_kw)
 
