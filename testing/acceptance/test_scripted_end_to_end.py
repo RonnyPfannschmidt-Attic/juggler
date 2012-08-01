@@ -33,7 +33,7 @@ def test_scripted_end_to_end(juggler, tmpdir):
                                run=juggler.run_task)
 
 
-@pytest.mark.changes_extra(timeout=3000)
+@pytest.mark.changes_extra(timeout=30)
 @pytest.mark.parametrize('axis', [
     {},
     {'test': [1, 2, 3, 4, 5, 6]},
@@ -84,11 +84,14 @@ def test_spawned_parts_2_simple_worker(juggler, axis, tmpdir):
     try:
         completion.join(timeout=60)  # 2 min
     finally:
+        import threading
+        for thread in threading.enumerate():
+            thread._Verbose__verbose = True
         completion.kill()
+        slave1.kill()
+        slave2.kill()
+        master.kill()
     #XXX: check all tasks for completion status
     #ask = juggler.get(step.task, schema=Task)
     #assert task.project == project._id
-    slave1.kill()
-    slave2.kill()
-    master.kill()
     async.joinall([master, slave1, slave2, completion], raise_error=True)
