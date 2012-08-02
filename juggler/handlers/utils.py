@@ -126,7 +126,6 @@ def gather_next(db, type, status, **watch_kw):
             for row in rows:
                 if _compare(row['doc'], watch_kw):
                     return type.wrap(row['doc']), results
-            assert 0
         else:
             return type.wrap(rows[0]['doc']), results
     log.debug("gather next stm info {}", results)

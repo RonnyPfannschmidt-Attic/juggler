@@ -1,6 +1,7 @@
 import time
 import threading
 import os
+import select
 
 _BACKEND = os.environ.get("COUCHDBKIT_BACKEND", 'thread')
 
@@ -53,6 +54,12 @@ class ThreadAsyncModule(object):
     from Queue import Queue, Empty
     Queue, Empty  # silence pyflakes
 
+    def wait_read(self, fd):
+        r = None
+        while not r:
+            r, _, _ = select.select([fd], [], [], 0.2)
+            _magic_stop()
+
     def sleep(self, seconds):
         time.sleep(seconds)
         _magic_stop()
@@ -94,6 +101,8 @@ else:
     class GeventAsyncModule(object):
         from gevent.queue import Queue
         Queue  # silence pytest
+        from gevent.socket import wait_read
+        wait_read = staticmethod(wait_read)
         spawn = staticmethod(gevent.spawn)
         sleep = staticmethod(gevent.sleep)
         joinall = staticmethod(gevent.joinall)
@@ -111,3 +120,4 @@ sleep = current.sleep
 joinall = current.joinall
 Queue = current.Queue
 queue_iter = current.queue_iter
+wait_read = current.wait_read

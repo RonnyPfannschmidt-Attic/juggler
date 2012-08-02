@@ -38,13 +38,13 @@ class SubProcessProc(Proc):
         self.popen = start_subprocess(self)
 
 
-def stream_line_iter_gevent(fp):
+def stream_line_iter(fp):
     import fcntl
-    from gevent.socket import wait_read
     # make the file nonblocking
     fcntl.fcntl(fp, fcntl.F_SETFL, os.O_NONBLOCK)
     remainder = ''
     while True:
+        async.wait_read(fp)
         try:
             chunk = fp.read(1024)
             if not chunk:
@@ -66,14 +66,6 @@ def stream_line_iter_gevent(fp):
             for line in lines:
                 yield line
             remainder  # XXX: pyflakes
-        wait_read(fp.fileno())
-
-
-def stream_line_iter(fp):
-    if async._BACKEND == 'gevent':
-        return stream_line_iter_gevent(fp)
-    elif async._BACKEND == 'thread':
-        return iter(fp)
 
 
 def _stream_reader(proc, stream, emit):
