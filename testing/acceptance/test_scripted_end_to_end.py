@@ -33,7 +33,7 @@ def test_scripted_end_to_end(juggler, tmpdir):
                                run=juggler.run_task)
 
 
-@pytest.mark.changes_extra(timeout=30)
+@pytest.mark.changes_extra(timeout=300)
 @pytest.mark.parametrize('axis', [
     {},
     {'test': [1, 2, 3, 4, 5, 6]},
