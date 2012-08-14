@@ -10,7 +10,7 @@ messy_states = u'building', u'claimed', u'claiming'
 
 def clean_data_of_task(db, taskid):
     print('cleaning data of', taskid)
-    
+
     items = db.all_docs(
         startkey=taskid + ':',
         endkey=taskid + ';',
@@ -21,7 +21,7 @@ def clean_data_of_task(db, taskid):
     ).all()
     print('killing', len(items), 'items')
     db.bulk_delete(items)
-    pass
+
 
 def main(db):
     info = db.view('juggler/stm',
@@ -36,11 +36,12 @@ def main(db):
 
     for state in items:
         print('reseting', items[state], 'of', state, 'to new')
-        listing = db.view('juggler/stm',
-                        key=[u'juggler:task', state],
-                        reduce=False,
-                        wrapper=itemgetter(u'id')
-                       ).all()
+        listing = db.view(
+            'juggler/stm',
+            key=[u'juggler:task', state],
+            reduce=False,
+            wrapper=itemgetter(u'id')
+        ).all()
         for item in listing:
             clean_data_of_task(db, item)
             data = db.get(item)
@@ -53,4 +54,3 @@ if __name__ == '__main__':
     import sys
     db = get_database(sys.argv[1])
     main(db)
-

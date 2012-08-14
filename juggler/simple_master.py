@@ -39,15 +39,16 @@ def run_master(juggler, name, callbacks):
     for change in new_changes:
         dispatch_doc(juggler, change['doc'], callbacks)
 
+
 def dispatch_doc(db, doc, callbacks):
-        lookup = str(doc['type']), str(doc['status'])
-        log.debug('event {} for {}', lookup, doc['_id'])
-        call = callbacks.get(lookup)
-        if call is not None:
-            obj = call.type.wrap(doc)
-            log.info('call {call.__name__} for {obj.type} {obj._id}',
-                     call=call, obj=obj)
-            call.func(db, obj)  # protect against green exit
+    lookup = str(doc['type']), str(doc['status'])
+    log.debug('event {} for {}', lookup, doc['_id'])
+    call = callbacks.get(lookup)
+    if call is not None:
+        obj = call.type.wrap(doc)
+        log.info('call {call.__name__} for {obj.type} {obj._id}',
+                 call=call, obj=obj)
+        call.func(db, obj)  # protect against green exit
 
 
 def simple_master(service, args=None):
