@@ -10,7 +10,6 @@ map.coffee: |
     return
 reduce.coffee: |
   (keys, values, rereduce) ->
-    log values
     result = values.pop()
     for item in values
       for name, take of item
