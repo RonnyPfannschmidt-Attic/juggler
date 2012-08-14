@@ -60,7 +60,8 @@ def _cleaned(doc):
 
 
 def watch_for(db, type, **kw):
-    changes = listen_new_changes(db, type=type._doc_type)
+    since = kw.pop(since, 0)
+    changes = listen_new_changes(db, type=type._doc_type, since=since)
     for row in changes:
         doc = row['doc']
         if doc['_id'][0] == '_':
