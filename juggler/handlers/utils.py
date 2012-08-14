@@ -7,7 +7,7 @@ import couchdbkit
 from juggler.async import _BACKEND, _magic_stop
 
 import logbook
-log = logbook.Logger('utils', level='info')
+log = logbook.Logger('utils')
 
 #: provate variable for test settings injection
 _CHANGES_EXTRA = {}
@@ -20,6 +20,7 @@ def listen_some_changes(db, **kw):
         include_docs=True,
         filter='juggler/management',
         feed='longpoll',
+        limit=100,
         **dict(_CHANGES_EXTRA, **kw))
 
     r.should_close = True
