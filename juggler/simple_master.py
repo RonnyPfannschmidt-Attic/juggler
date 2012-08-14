@@ -20,13 +20,28 @@ def make_callbacks(items):
     return result
 
 
-def run_master(db, name, callbacks):
+def run_master(juggler, name, callbacks):
     #XXX: heartbeat
-    new_changes = utils.listen_new_changes(db.db)
+    viewresult = juggler.db.view(
+        'juggler/stm',
+        keys=callbacks.keys(),
+        include_docs=True,
+        reduce=False,
+        update_seq=True,
+    )
+    log.info('walking stm view result')
+    for row in viewresult.all():
+        dispatch_doc(juggler, row['doc'], callbacks)
+
+    log.info('walking changes since {seq}', seq=viewresult.update_seq)
+    new_changes = utils.listen_new_changes(juggler.db,
+                                           since=viewresult.update_seq)
     for change in new_changes:
-        doc = change['doc']
+        dispatch_doc(juggler, change['doc'], callbacks)
+
+def dispatch_doc(db, doc, callbacks):
         lookup = str(doc['type']), str(doc['status'])
-        log.debug('event {} for {}', lookup, change['id'])
+        log.debug('event {} for {}', lookup, doc['_id'])
         call = callbacks.get(lookup)
         if call is not None:
             obj = call.type.wrap(doc)
