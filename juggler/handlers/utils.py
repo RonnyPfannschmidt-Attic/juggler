@@ -48,7 +48,7 @@ def get_database(name_or_uri):
 def _compare(obj, kw):
     log.debug('compare for \n {0}\n {1}', _cleaned(obj), kw)
     for k, v in kw.items():
-        if obj.get(k) != v:
+        if obj.get(unicode(k)) != v:
             return False
     else:
         return True
@@ -108,7 +108,6 @@ def generate_specs(axis):
 
 
 def gather_next(db, type, status, **watch_kw):
-    since = 0
 
     params = dict(
         key=[type._doc_type, status],
