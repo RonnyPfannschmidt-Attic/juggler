@@ -5,7 +5,7 @@ from juggler.handlers.utils import get_database
 #XXX: one place for states
 #XXX: think about extra state data like owner
 
-messy_states = u'building', u'claimed', u'claiming'
+messy_states = u'building', u'claimed', u'claiming', u'pending'
 
 
 def clean_data_of_task(db, taskid):
