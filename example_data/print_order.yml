@@ -1,0 +1,8 @@
+project: "print-some"
+type: juggler:order
+status: received
+axis:
+  first: [1,2,3,4,5,6,7,8,9,0]
+  second: [1,2,3,4,5,6,7,8,9,0]
+  third: [1,2,3,4,5,6,7,8,9,0]
+  fouth: [1,2,3,4,5,6,7,8,9,0]
