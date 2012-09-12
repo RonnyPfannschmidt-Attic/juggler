@@ -7,7 +7,7 @@ import couchdbkit
 from juggler.async import _BACKEND, _magic_stop
 
 import logbook
-log = logbook.Logger('utils')
+log = logbook.Logger('utils', level='info')
 
 #: provate variable for test settings injection
 _CHANGES_EXTRA = {}
