@@ -5,7 +5,7 @@ import logbook
 from juggler import async
 from juggler.model import utils
 
-log = logbook.Logger('Proc')
+log = logbook.Logger('Proc', level='info')
 
 
 class Proc(object):
