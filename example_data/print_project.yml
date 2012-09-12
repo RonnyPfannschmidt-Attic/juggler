@@ -3,5 +3,7 @@ type: juggler:project
 steps:
 - steper: popen
   args: [echo, {__var__: first}, {__var__: second}]
+  env: {}
 - steper: popen
   args: [echo, {__var__: third}, {__var__: fouth}]
+  env: {}
