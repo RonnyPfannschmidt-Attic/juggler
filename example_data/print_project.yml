@@ -2,6 +2,6 @@ _id: print-some
 type: juggler:project
 steps:
 - steper: popen
-  args: [echo, {__var__: fist}, {__var__: second}]
+  args: [echo, {__var__: first}, {__var__: second}]
 - steper: popen
   args: [echo, {__var__: third}, {__var__: fouth}]
