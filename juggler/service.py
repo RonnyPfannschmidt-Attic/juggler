@@ -1,6 +1,7 @@
 from .handlers.utils import watch_for
 import time
 import logbook
+from couchdbkit import ResourceConflict
 
 log = logbook.Logger('juggler', level='info')
 
@@ -55,8 +56,12 @@ class Juggler(object):
         steps = procdir.find_steps()
         assert steps
         task.status = 'building'
-        log.debug('building {}', task._id)
-        self.save_doc(task)
+        try:
+            self.save_doc(task)
+            log.debug('building {}', task._id)
+        except ResourceConflict:
+            log.error('building {} failed due to db conflict')
+            return
         for step in steps:
             log.debug(
                 'run {task._id} step {step.index}',
