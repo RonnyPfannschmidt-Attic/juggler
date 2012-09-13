@@ -1,6 +1,7 @@
 import copy
 import json
 import math
+import random
 from itertools import product
 from functools import wraps
 import couchdbkit
@@ -117,18 +118,18 @@ def gather_next(db, type, status, **watch_kw):
         update_seq=True,
         reduce=False)
     if not watch_kw:
-        params.update(limit=1)
+        params.update(limit=10)
 
     results = db.db.raw_view('/_design/juggler/_view/stm', params)
     results = results.json_body
     rows = results.pop('rows')
+
+    if watch_kw:
+        rows = [row for row in rows if _compare(row['doc'], watch_kw)]
+
     if rows:
-        if watch_kw:
-            for row in rows:
-                if _compare(row['doc'], watch_kw):
-                    return type.wrap(row['doc']), results
-        else:
-            return type.wrap(rows[0]['doc']), results
+        return type.wrap(random.choice(rows)['doc']), results
+
     log.debug("gather next stm info {}", results)
     since = results['update_seq']
 
