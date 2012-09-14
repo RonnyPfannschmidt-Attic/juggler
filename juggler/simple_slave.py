@@ -1,25 +1,6 @@
 from juggler.handlers import slave
 
 
-def claim(service, args):
-    configure_claim(service, args)
-    service.run()
-
-
-def configure_claim(service, args):
-    raise NotImplementedError
-
-
-def configure_work(service, args):
-    raise NotImplementedError
-    pass
-
-
-def work(service, args):
-    raise NotImplementedError
-    pass
-
-
 def simple(service, args=None):
     #XXX hack
     #XXX: better basedir
