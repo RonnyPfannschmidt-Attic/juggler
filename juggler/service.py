@@ -1,5 +1,4 @@
 from .handlers.utils import watch_for
-import time
 import logbook
 from couchdbkit import ResourceConflict
 
@@ -29,18 +28,6 @@ class Juggler(object):
 
     def save_doc(self, doc):
         self.db.save_doc(doc)
-
-    def sleep(self):
-        time.sleep(.5)
-
-    def smart_watch(self, handler, **kw):
-        #XXX: make a version that remembers since
-        return handler(self, **kw)
-
-    def refresh(self, doc):
-        schema = type(doc)
-        new_doc = self.real_db.get(doc._id, schema=schema)
-        doc._doc = new_doc._doc
 
     def bulk_save(self, *k, **kw):
         self.db.bulk_save(*k, **kw)

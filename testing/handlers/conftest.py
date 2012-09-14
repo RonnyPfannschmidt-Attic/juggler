@@ -24,7 +24,9 @@ class FakedDatabase(service.Juggler):
 
     def refresh(self, doc):
         if self.real_db:
-            super(FakedDatabase, self).refresh(doc)
+            schema = type(doc)
+            new_doc = self.real_db.get(doc._id, schema=schema)
+            doc._doc = new_doc._doc
 
     def watch_for(self, type, **kw):
         if self.real_db:
