@@ -47,6 +47,7 @@ class Juggler(object):
             self.save_doc(task)
             log.debug('building {}', task._id)
         except ResourceConflict:
+            #XXX: test for this case
             log.error('building {} failed due to db conflict')
             return
         for step in steps:
