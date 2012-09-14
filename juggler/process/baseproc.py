@@ -1,4 +1,3 @@
-import time
 from datetime import datetime
 from reprtools import FormatRepr
 import logbook
@@ -33,7 +32,6 @@ class Proc(object):
     def emit(self, event=None, **kw):
         log.debug('event emit {} {}', self.step._id, event or kw)
         self.queue.put(event or kw)
-        time.sleep(0)
 
     def _store(self):
         log.debug('store thread start {}', self.step._id)
