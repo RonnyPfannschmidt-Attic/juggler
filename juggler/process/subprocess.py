@@ -38,34 +38,35 @@ class SubProcessProc(Proc):
         self.popen = start_subprocess(self)
 
 
-def stream_line_iter(fp):
+def stream_chunk_iter(fp, size=1024):
     import fcntl
     # make the file nonblocking
     fcntl.fcntl(fp, fcntl.F_SETFL, os.O_NONBLOCK)
-    remainder = ''
     while True:
         async.wait_read(fp)
         try:
-            chunk = fp.read(1024)
+            chunk = fp.read(size)
             if not chunk:
-                if remainder:
-                    yield remainder
-                return
-
+                break
+            yield chunk
         except IOError:
             ex = sys.exc_info()[1]
             if ex[0] != errno.EAGAIN:
                 raise
+
+
+def stream_line_iter(fp):
+    remainder = ''
+    for chunk in stream_chunk_iter(fp):
+        data = remainder + chunk
+        lines = data.splitlines(1)
+        if lines[-1][-1] != '\n':
+            remainder = lines.pop()
         else:
-            data = remainder + chunk
-            lines = data.splitlines(1)
-            if lines[-1][-1] != '\n':
-                remainder = lines.pop()
-            else:
-                remainder = ''
-            for line in lines:
-                yield line
-            remainder  # XXX: pyflakes
+            remainder = ''
+        for line in lines:
+            yield line
+        remainder  # XXX: pyflakes
 
 
 def _stream_reader(proc, stream, emit):
