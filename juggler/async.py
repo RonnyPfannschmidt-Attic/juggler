@@ -91,6 +91,7 @@ class ThreadAsyncModule(object):
                     break
                 else:
                     yield item
+                    _magic_stop()
 
 
 try:
