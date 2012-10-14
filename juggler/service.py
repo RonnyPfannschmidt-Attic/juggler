@@ -48,7 +48,7 @@ class Juggler(object):
             log.debug('building {}', task._id)
         except ResourceConflict:
             #XXX: test for this case
-            log.error('building {} failed due to db conflict')
+            log.error('building {} failed due to db conflict', task._id)
             return
         for step in steps:
             log.debug(
