@@ -1,5 +1,6 @@
 import pytest
 from juggler import model
+from juggler.model import states as s
 from juggler.handlers import inbox
 
 from testing import with_quick_change_timeout
@@ -8,20 +9,20 @@ from testing import with_quick_change_timeout
 @with_quick_change_timeout
 def test_inbox_simple_validate(db):
     #XXX: test a invalid case
-    order = model.Order(_id='order', status='received')
+    order = model.Order(_id='order', status=s.received)
     db.save_doc(order)
     inbox.order_validate(db)
     db.refresh(order)
-    assert order.status == 'valid'
+    assert order.status == s.valid
 
 
 @with_quick_change_timeout
 def test_valid_order_simple_ready(db):
-    order = model.Order(status='valid')
+    order = model.Order(status=s.valid)
     db.save_doc(order)
     inbox.valid_order_prepare(db)
     db.refresh(order)
-    assert order.status == 'ready'
+    assert order.status == s.ready
 
 
 @with_quick_change_timeout
