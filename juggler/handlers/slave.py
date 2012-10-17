@@ -1,14 +1,14 @@
 from couchdbkit.exceptions import ResourceConflict
-from ..model import Task
+from ..model import Task, states as s
 from .utils import watches_for
 
 from logbook import Logger
 log = Logger('slave')
 
 
-@watches_for(Task, 'pending')
+@watches_for(Task, s.pending)
 def claim_pending_task(db, task, owner):
-    task.status = 'claiming'
+    task.status = s.claiming
     task.owner = owner.name
     try:
         db.save_doc(task)
@@ -27,7 +27,7 @@ def claim_pending_task(db, task, owner):
         )
 
 
-@watches_for(Task, 'claimed', _id=lambda kw: kw['id'])
+@watches_for(Task, s.claimed, _id=lambda kw: kw['id'])
 def wait_for_one_claiming_task(db, task, id, owner):
     log.info(
         "worker {owner.name} waited for {task._id} of {task.owner}",
@@ -37,7 +37,7 @@ def wait_for_one_claiming_task(db, task, id, owner):
         return task
 
 
-@watches_for(Task, 'claimed', owner=lambda kw: kw['owner'])
+@watches_for(Task, s.claimed, owner=lambda kw: kw['owner'])
 def run_one_claimed_task(db, task, owner, run):
     log.info('dispatching task {task._id}', task=task)
     run(task)
