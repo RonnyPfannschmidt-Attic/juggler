@@ -3,6 +3,7 @@ from reprtools import FormatRepr
 import logbook
 from juggler import async
 from juggler.model import utils
+from juggler.model import states as s
 
 log = logbook.Logger('Proc', level='info')
 
@@ -43,7 +44,7 @@ class Proc(object):
             self.save_with_batch(doc)
             returncode = getattr(doc, 'returncode', None)
             if returncode is not None and self.step is not None:
-                self.finish_step('complete' if returncode == 0 else 'failed')
+                self.finish_step(s.complete if returncode == 0 else s.failed)
         log.debug('store thread stop {}', self.step._id)
 
     def finish_step(self, newstate):

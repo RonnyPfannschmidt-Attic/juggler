@@ -1,6 +1,7 @@
 from .handlers.utils import watch_for
 import logbook
 from couchdbkit import ResourceConflict
+from juggler.model import states as s
 
 log = logbook.Logger('juggler', level='info')
 
@@ -42,7 +43,7 @@ class Juggler(object):
         procdir = ProcDir(self.db, self.path.join(task.project), task)
         steps = procdir.find_steps()
         assert steps
-        task.status = 'building'
+        task.status = s.building
         try:
             self.save_doc(task)
             log.debug('building {}', task._id)
@@ -55,6 +56,11 @@ class Juggler(object):
                 'run {task._id} step {step.index}',
                 task=task, step=step)
             procdir.run(step)
-        task.status = 'completed'
+            #XXX: test for break
+            if step.status != s.complete:
+                break
+        # a task ends with the state of the last step finished
+        # which may be completed, failed or canceled
+        task.status = step.status
         log.info('completed {}', task._id)
         self.save_doc(task)
