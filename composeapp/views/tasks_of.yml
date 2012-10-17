@@ -1,0 +1,17 @@
+map.coffee: |
+ (doc) ->
+   if doc.type == 'juggler:task'
+     emit doc.task, [doc.status]
+   return
+
+
+reduce.coffee: |
+  (key, values) ->
+    # copied from
+    # due to map returning lists we ignore rereduce
+    # and always do the same
+    values = Array.concat.apply(null, values)
+    uniq = {}
+    values.forEach (item) -> uniq[item] = true
+    Object.keys(uniq)
+
