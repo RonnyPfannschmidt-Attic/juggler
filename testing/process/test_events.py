@@ -1,5 +1,6 @@
 import copy
 from juggler.model import Step
+from juggler.model import states as s
 from juggler.process.subprocess import python_template, subprocess_template
 
 
@@ -35,11 +36,11 @@ def test_run_simple_process(procdir):
     procdir.run(step)
     checks = [
         ('type', "juggler:step",
-         'status', "running"),
+         'status', s.running),
         ('line', 'somefile\n'),
         ('returncode', 0),
         ('type', "juggler:step",
-         'status', "complete"),
+         'status', s.complete),
     ]
     check_events(procdir, checks)
 
@@ -51,10 +52,10 @@ def test_simple_process_failure(procdir):
     procdir.run(step)
     checks = [
         ('type', "juggler:step",
-         'status', "running"),
+         'status', s.running),
         ('returncode', 1),
         ('type', "juggler:step",
-         'status', "failed"),
+         'status', s.failed),
     ]
     check_events(procdir, checks)
 
@@ -79,10 +80,10 @@ def test_python(procdir):
     procdir.run(doc)
     checks = [
         ('type', "juggler:step",
-         'status', "running"),
+         'status', s.running),
         ('line', '1\n'),
         ('returncode', 0),
         ('type', "juggler:step",
-         'status', "complete"),
+         'status', s.complete),
     ]
     check_events(procdir, checks)
