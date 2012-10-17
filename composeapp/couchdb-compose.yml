@@ -9,6 +9,7 @@ load:
 - views/streams.yml
 - views/statret.yml
 - views/steps_of.yml
+- views/tasks_of.yml
 - views/lines.yml
 - lists.yml
 
