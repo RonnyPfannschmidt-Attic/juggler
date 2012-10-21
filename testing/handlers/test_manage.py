@@ -1,6 +1,6 @@
 import pytest
 from juggler import model
-from juggler.handlers import shedule
+from juggler.handlers import manage
 from testing import with_quick_change_timeout
 
 
@@ -12,7 +12,7 @@ def test_new_task_generate_steps_programmatic_unimplemented(db):
     db.save_doc(task)
     pytest.raises(
         NotImplementedError,
-        shedule.new_task_generate_steps,
+        manage.new_task_generate_steps,
         db)
 
 
@@ -22,7 +22,7 @@ def test_new_task_generate_from_template(db):
     db._.get.return_value = project
     task = model.Task(status='new', project='blabla')
     db.save_doc(task)
-    shedule.new_task_generate_steps(db)
+    manage.new_task_generate_steps(db)
     items = db._.bulk_save.call_args[0][0]
     saved_task = items.pop(0)
     db.refresh(task)
@@ -35,7 +35,7 @@ def test_new_task_generate_from_template(db):
 def test_approve_claimed_task_simple(db):
     task = model.Task(status='claiming', owner='test')
     db.save_doc(task)
-    shedule.approve_claimed_task(db)
+    manage.approve_claimed_task(db)
     db.refresh(task)
     assert task.status == 'claimed'
 

@@ -1,5 +1,5 @@
 from logbook import Logger
-from juggler.handlers import inbox, shedule, utils
+from juggler.handlers import inbox, manage, utils
 
 log = Logger('Master')  # , level='info')
 
@@ -8,8 +8,8 @@ callbacks_workers = [
     inbox.order_validate,
     inbox.valid_order_prepare,
     inbox.ready_order_generate_tasks,
-    shedule.new_task_generate_steps,
-    shedule.approve_claimed_task,
+    manage.new_task_generate_steps,
+    manage.approve_claimed_task,
 ]
 
 
