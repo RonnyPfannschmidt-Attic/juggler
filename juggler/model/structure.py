@@ -27,7 +27,7 @@ class Actor(Document):
     name = StringProperty()
     belongs_to = StringProperty()
     # one of new, stopped, started, disabled
-    #: one of one of cron, shedule, inbox or make
+    #: one of one of cron, manage, inbox or make
     intent = StringProperty()
 
 

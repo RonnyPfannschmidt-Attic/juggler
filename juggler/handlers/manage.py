@@ -2,7 +2,7 @@ from logbook import Logger
 from ..model import Task, Project, states as s
 from .utils import watches_for, steps_from_template
 
-log = Logger('shedule', level='info')
+log = Logger('manage', level='info')
 
 
 @watches_for(Task, s.new)

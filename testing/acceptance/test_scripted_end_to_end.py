@@ -2,7 +2,7 @@ import py
 import pytest
 from juggler import async
 from juggler.service import Juggler
-from juggler.handlers import inbox, shedule, slave
+from juggler.handlers import inbox, manage, slave
 from juggler.model import Project, Order
 from juggler.process.subprocess import python_template
 from testing import with_quick_change_timeout
@@ -23,11 +23,11 @@ def test_scripted_end_to_end(juggler, tmpdir):
     inbox.order_validate(juggler)
     inbox.valid_order_prepare(juggler)
     inbox.ready_order_generate_tasks(juggler)
-    shedule.new_task_generate_steps(juggler)
+    manage.new_task_generate_steps(juggler)
 
     slave.claim_pending_task(juggler, owner=juggler)
 
-    shedule.approve_claimed_task(juggler)
+    manage.approve_claimed_task(juggler)
     slave.run_one_claimed_task(juggler,
                                owner=juggler.name,
                                run=juggler.run_task)

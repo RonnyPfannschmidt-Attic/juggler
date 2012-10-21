@@ -4,7 +4,7 @@ import subprocess
 
 from juggler import model
 from juggler.handlers.utils import get_database
-from juggler.handlers import shedule
+from juggler.handlers import manage
 from juggler import service
 
 path = py.path.local(__file__).dirpath().dirpath().join('composeapp').strpath
@@ -34,4 +34,4 @@ print 'save'
 j.save_doc(task)
 
 print 'approve'
-shedule.approve_claimed_task(j)
+manage.approve_claimed_task(j)
