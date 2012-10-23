@@ -1,7 +1,7 @@
 import pytest
 from couchdbkit.exceptions import ResourceConflict
 from juggler import model
-from juggler.handlers import slave
+from juggler.handlers import work
 from testing import with_quick_change_timeout
 
 
@@ -17,7 +17,7 @@ def test_claim_pending_task(db, conflict):
     class owner:
         name = 'test'
 
-    result = slave.claim_pending_task(db, owner=owner)
+    result = work.claim_pending_task(db, owner=owner)
     db.refresh(task)
     if not conflict:
         assert task.owner == 'test'
@@ -33,4 +33,4 @@ def test_run_one_claimed_task(db):
     def run(given):
         assert given._id == task._id
 
-    slave.run_one_claimed_task(db, owner='o', run=run)
+    work.run_one_claimed_task(db, owner='o', run=run)
