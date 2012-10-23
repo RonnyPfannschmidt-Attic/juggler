@@ -3,7 +3,7 @@ from ..model import Task, states as s
 from .utils import watches_for
 
 from logbook import Logger
-log = Logger('slave')
+log = Logger('work')
 
 
 @watches_for(Task, s.pending)
