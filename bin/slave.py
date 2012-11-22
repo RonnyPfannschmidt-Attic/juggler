@@ -3,21 +3,12 @@ import argparse
 
 from juggler.handlers.utils import get_database
 from juggler.service import Juggler
-from juggler.simple_slave import claim, work, simple
+from juggler.simple_slave import simple
 
 parser = argparse.ArgumentParser()
 parser.add_argument('database')
 parser.add_argument('name')
 sp = parser.add_subparsers()
-claim_parser = sp.add_parser('claim')
-claim_parser.set_defaults(func=claim)
-#XXX: configure in database
-claim_parser.add_argument('--set-backlog', type=int, default=None)
-
-
-work_parser = sp.add_parser('work')
-work_parser.set_defaults(func=work)
-work_parser.add_argument('id')
 
 simple_parser = sp.add_parser('simple')
 simple_parser.set_defaults(func=simple)
