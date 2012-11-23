@@ -110,8 +110,7 @@ def generate_specs(axis):
         yield dict(zip(names, values))
 
 
-def gather_next(db, type, status, **watch_kw):
-
+def get_existing(db, type, status, **watch_kw):
     params = dict(
         key=[type._doc_type, status],
         include_docs=True,
@@ -124,14 +123,23 @@ def gather_next(db, type, status, **watch_kw):
     results = results.json_body
     rows = results.pop('rows')
 
+    since = results['update_seq']
     if watch_kw:
         rows = [row for row in rows if _compare(row['doc'], watch_kw)]
+    return since, rows
 
+
+def gather_next(db, type, status, **watch_kw):
+    since, rows = get_existing(db, type, status, **watch_kw)
     if rows:
-        return type.wrap(random.choice(rows)['doc']), results
+        return type.wrap(random.choice(rows)['doc']), None
 
-    log.debug("gather next stm info {}", results)
-    since = results['update_seq']
+    log.debug(
+        "gather next stm info for {type} of {status} since {since}",
+        type=type,
+        status=status,
+        since=since,
+    )
 
     return db.watch_for(type, status=status, since=since, **watch_kw)
 
