@@ -77,7 +77,7 @@ def test_spawned_parts_2_simple_worker(juggler, axis, tmpdir):
                 ' '.join(item['key']) for item in items
             )
             py.std.pprint.pprint(counter)
-            if counter[u'juggler:task completed'] == len(items):
+            if counter[u'juggler:task complete'] == len(items):
                 break
     completion = async.spawn(wait_for_completion, juggler)
     completion._Thread__name = 'completion'
