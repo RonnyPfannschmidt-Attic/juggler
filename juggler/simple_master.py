@@ -29,20 +29,26 @@ def run_master(juggler, name, callbacks):
         reduce=False,
         update_seq=True,
     )
-    log.info('walking stm view result')
+    viewresult.fetch()
+    since = viewresult.update_seq
+    log.info('walking stm view result up to {since}', since=since)
     for row in viewresult.all():
-        dispatch_doc(juggler, row['doc'], callbacks)
+        doc = row['doc']
+        if doc is None:
+            log.warning('stm view result doc include failed for {id}', **row)
+            doc = juggler.db.get(row['id'])
+            assert doc['status'] == row['key'][1]
+        dispatch_doc(juggler, doc, callbacks)
 
-    log.info('walking changes since {seq}', seq=viewresult.update_seq)
-    new_changes = utils.listen_new_changes(juggler.db,
-                                           since=viewresult.update_seq)
+    log.info('walking changes since {since}', since=since)
+    new_changes = utils.listen_new_changes(juggler.db, since=since)
     for change in new_changes:
         dispatch_doc(juggler, change['doc'], callbacks)
 
 
 def dispatch_doc(db, doc, callbacks):
     lookup = str(doc['type']), str(doc['status'])
-    log.debug('event {} for {}', lookup, doc['_id'])
+    log.debug('event {type} -> {status} for {_id}', **doc)
     call = callbacks.get(lookup)
     if call is not None:
         obj = call.type.wrap(doc)
